@@ -21,6 +21,7 @@ const LoginPage:NextPage = () => {
                     <motion.h1
                         initial={{y: 50}}
                         animate={{y:0}}
+                        exit={{y: -50}}
                         transition={{duration:0.2,ease:"easeOut",delay:0.5}}
                         className='text-5xl font-bold text-gray-700'>Tele Cloud</motion.h1>
                 </div>
