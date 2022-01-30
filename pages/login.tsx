@@ -82,12 +82,12 @@ const LoginPage:NextPage = () => {
         // Cleans last errorMessages
         setErrorMessage("");
 
-        const validationResponse:validationResponseI = await (await fetch(`/api/users/check/${inputRef.current?.value}@teleinformatika.eu`, {
+        const validationResponse:validationResponseI = await (await fetch(`/api/users/check/${inputRef.current?.value.toLowerCase()}@teleinformatika.eu`, {
             method: 'GET'
         })).json();
 
         if(validationResponse.statusCode === 200){
-            userEmail = inputRef.current?.value;
+            userEmail = inputRef.current?.value.toLowerCase();
             // transition
             inputRef.current?.classList.add("text-green-400");
             setTimeout(() => {

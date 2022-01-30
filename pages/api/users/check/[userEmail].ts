@@ -11,8 +11,14 @@ export default async function handler(
 ) {
     await dbConnect();
     const {userEmail}= req.query;
+    if(userEmail === "@teleinformatika.eu") {
+        res.status(400).json({
+            statusCode: 400,
+            message: "Nebyl zadán email"
+        })
+    }
     // @ts-ignore
-    if(!/(.*)\.(.*)@teleinformatika.eu/.test(userEmail)) {res.status(400).json({
+    if(!/(.*)\.(.*)@teleinformatika\.eu/.test(userEmail)) {res.status(400).json({
         statusCode: 400,
         message: "Tento účet nelze použít"
     }); return}

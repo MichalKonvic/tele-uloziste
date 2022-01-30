@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const validateEmail = (email: string): boolean => {
-    return /(.*)\.(.*)@teleinformatika.eu/.test(email);
+    return /(.*)\.(.*)@teleinformatika\.eu/.test(email);
 }
 
 const userSchema = new mongoose.Schema({
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "User must have email"],
         validate: [validateEmail,"Email didnt pass the check"],
-        match:[/(.*)\.(.*)@teleinformatika.eu/,"Email didnt pass the check"]
+        match:[/(.*)\.(.*)@teleinformatika\.eu/,"Email didnt pass the check"]
     },
     password: {
         type: String,
