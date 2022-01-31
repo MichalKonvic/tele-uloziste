@@ -1,17 +1,33 @@
+
+
 import type { NextApiRequest, NextApiResponse } from "next";
-import dbConnect from "../../../../lib/dbConnect";
-import user from "../../../../models/user";
+import dbConnect from "../../../lib/dbConnect";
+import user from "../../../models/user";
 type resData = {
     statusCode: number,
     message: string
+}
+interface reqBodyI{
+    userEmail: string
 }
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<resData> 
 ) {
     await dbConnect();
-    const {userEmail}= req.query;
-    if(userEmail === "@teleinformatika.eu") {
+    let userEmail = "";
+    try {
+        const parsedRequestBody:reqBodyI = JSON.parse(req.body);
+        userEmail = parsedRequestBody.userEmail;
+    } catch (error) {
+        res.status(500).json({
+            statusCode: 500,
+            message: "Došlo k problému"
+        })
+    }
+
+
+    if(userEmail === "@teleinformatika.eu" ||!userEmail) {
         res.status(400).json({
             statusCode: 400,
             message: "Nebyl zadán email"

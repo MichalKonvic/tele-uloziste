@@ -22,7 +22,7 @@ const LoginPage:NextPage = () => {
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const titleAnimation = useAnimation();
     const sectionAnimation = useAnimation();
-    const [user,setUser] = useState({email: ""});
+    const [user,setUser] = useState({username: ""});
 
 
 
@@ -81,7 +81,7 @@ const LoginPage:NextPage = () => {
         e:React.MouseEvent<HTMLButtonElement,MouseEvent>
     ) => {
         e.preventDefault();
-        setUser({email:""})
+        setUser({username:""})
         titleTransition("Tele Cloud");
         formTransition(<EmailGrabber handleSubmit={handleEmailSubmit}/>);
     }
@@ -123,13 +123,24 @@ const LoginPage:NextPage = () => {
         e.preventDefault();
         // Cleans last errorMessages
         setErrorMessage("");
-
-        const validationResponse:validationResponseI = await (await fetch(`/api/users/check/${inputRef.current?.value.toLowerCase()}@teleinformatika.eu`, {
-            method: 'GET'
-        })).json();
-
+        const userEmail:string|undefined = inputRef.current?.value.toLowerCase();
+        const requestBody = {
+            "userEmail": `${userEmail}@teleinformatika.eu`
+        };
+        // POST request to validate email
+        const validationResponse:validationResponseI = await (
+            await fetch(
+                `/api/users/check/`,
+                {
+                    method: 'POST',
+                    body:JSON.stringify(requestBody)
+                }
+            )
+        ).json();
+        
+        // user exists
         if(validationResponse.statusCode === 200){
-            setUser({email:inputRef.current?.value.toLowerCase() || ""});
+            setUser({username:userEmail || ""});
             // transition
             inputRef.current?.classList.add("text-green-400");
             titleTransition("Heslo");
@@ -137,6 +148,7 @@ const LoginPage:NextPage = () => {
             return;
         }
 
+        // User needs registration
         if(validationResponse.statusCode === 404){
             // TODO send email to grabbed email with confirmation code
 
@@ -147,7 +159,7 @@ const LoginPage:NextPage = () => {
             );
             return;
         }
-        // invalid style
+        // Error occured
         // @ts-ignore
         inputRef.current.classList.add("text-red-400");
         setErrorMessage(validationResponse.message);
