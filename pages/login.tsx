@@ -4,6 +4,7 @@ import { NextPage } from 'next';
 import { motion, useAnimation } from 'framer-motion';
 import EmailGrabber from '../components/LoginPage/EmailGrabber';
 import PasswordGrabber from '../components/LoginPage/PasswordGrabber';
+import CodeGrabber from '../components/LoginPage/CodeGrabber';
 
 interface validationResponseI{
     statusCode: number,
@@ -21,7 +22,7 @@ const LoginPage:NextPage = () => {
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const titleAnimation = useAnimation();
     const sectionAnimation = useAnimation();
-    let userEmail:string|undefined = undefined;
+    const [user,setUser] = useState({email: ""});
 
 
 
@@ -45,7 +46,7 @@ const LoginPage:NextPage = () => {
         e:React.MouseEvent<HTMLButtonElement,MouseEvent>
     ) => {
         e.preventDefault();
-        userEmail = undefined;
+        setUser({email:""})
         setTimeout(() => {
             titleAnimation.start({y:-100,opacity:0});
             sectionAnimation.start({x:-480,opacity:0});
@@ -66,6 +67,28 @@ const LoginPage:NextPage = () => {
         }, 100);
     }
 
+    /**
+     * Registration code submit handling function
+     */
+    const handleRegistrationCodeSubmit = async (
+        e:React.MouseEvent<HTMLInputElement,MouseEvent>,
+        code: string,
+        codesDivRef: React.MutableRefObject<HTMLDivElement|null>
+    ) => {
+        e.preventDefault();
+        // TODO handle registration code and visual effects
+        if(false){
+            // if valid
+            codesDivRef.current?.classList.remove("defaultCode-LoginPage");
+            codesDivRef.current?.classList.add("validCode-LoginPage");
+            
+        }
+        if(true){
+            // if invalid
+            codesDivRef.current?.classList.remove("defaultCode-LoginPage");
+            codesDivRef.current?.classList.add("invalidCode-LoginPage");
+        }
+    }
 
 
     /**
@@ -87,7 +110,7 @@ const LoginPage:NextPage = () => {
         })).json();
 
         if(validationResponse.statusCode === 200){
-            userEmail = inputRef.current?.value.toLowerCase();
+            setUser({email:inputRef.current?.value.toLowerCase() || ""});
             // transition
             inputRef.current?.classList.add("text-green-400");
             setTimeout(() => {
@@ -113,7 +136,27 @@ const LoginPage:NextPage = () => {
         }
 
         if(validationResponse.statusCode === 404){
-            // TODO continue to registration
+            // TODO send email to grabbed email with confirmation code
+
+
+            setTimeout(() => {
+                titleAnimation.start({y:-100,opacity:0});
+                sectionAnimation.start({x:-480,opacity:0});
+                setTimeout(() => {
+                    titleAnimation.start({y:100});
+                    sectionAnimation.start({x:480});
+                }, 400);
+                setTimeout(() => {
+                    sectionAnimation.start({opacity:1});
+                    titleAnimation.start({opacity:1});
+                }, 600);
+                setTimeout(() => {
+                    setFormTitle("Registrace")
+                    titleAnimation.start({y:0});
+                    setFormSection(<CodeGrabber  handleSubmit={handleRegistrationCodeSubmit} handleAccountChange={handleAccountChange} />);
+                    sectionAnimation.start({x:0});
+                }, 1000);
+            }, 100);
             return;
         }
         // invalid style
@@ -150,7 +193,7 @@ const LoginPage:NextPage = () => {
     }
 
     // invalid style
-    inputRef.current.classList.add("text-red-400");
+    inputRef.current?.classList.add("text-red-400");
     setErrorMessage(validationResponse.message);
 }
 
@@ -168,7 +211,7 @@ const LoginPage:NextPage = () => {
             <link rel="icon" href="/favicon.svg" />
         </Head>
             <form className='duration-400 flex items-center flex-col w-full h-full justify-center bg-white md:w-fit md:h-fit md:px-10 md:py-14 md:border md:border-gray-300 md:shadow-xl md:rounded-lg overflow-hidden'>
-                <div className='flex items-center justify-center overflow-hidden'>
+                <div className='flex items-center justify-center overflow-hidden py-2'>
                     <motion.h1
                         initial={{y:200}}
                         animate={titleAnimation}

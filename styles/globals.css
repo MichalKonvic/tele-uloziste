@@ -18,3 +18,16 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@layer components {
+  .invalidCode-LoginPage input[type=tel] {
+    
+    @apply border-red-400 bg-red-100 text-red-500
+  }
+  .defaultCode-LoginPage input[type=tel]{
+    @apply bg-gray-300 border-gray-300 text-gray-600
+  }
+  .validCode-LoginPage input[type=tel]{
+    @apply bg-green-100 border-green-400 text-green-500
+  }
+}

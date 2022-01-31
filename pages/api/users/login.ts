@@ -13,4 +13,5 @@ export default async function handler(
     res:NextApiResponse
 ){
     await dbConnect();
+    // TODO validate user
 }
