@@ -23,8 +23,6 @@ const LoginPage:NextPage = () => {
     const titleAnimation = useAnimation();
     const sectionAnimation = useAnimation();
     const sectionRef:React.MutableRefObject<HTMLDivElement|null> = useRef(null);
-    const [user,setUser] = useState({username: ""});
-
 
 
     /**
@@ -82,7 +80,6 @@ const LoginPage:NextPage = () => {
         e:React.MouseEvent<HTMLButtonElement,MouseEvent>
     ) => {
         e.preventDefault();
-        setUser({username:""})
         titleTransition("Tele Cloud");
         formTransition(<EmailGrabber handleSubmit={handleEmailSubmit}/>);
     }
@@ -124,9 +121,9 @@ const LoginPage:NextPage = () => {
         e.preventDefault();
         // Cleans last errorMessages
         setErrorMessage("");
-        const userEmail:string|undefined = inputRef.current?.value.toLowerCase();
+        const username:string|undefined = inputRef.current?.value.toLowerCase();
         const requestBody = {
-            "userEmail": `${userEmail}@teleinformatika.eu`
+            "userEmail": `${username}@teleinformatika.eu`
         };
         // POST request to validate email
         const validationResponse:validationResponseI = await (
@@ -141,11 +138,10 @@ const LoginPage:NextPage = () => {
         
         // user exists
         if(validationResponse.statusCode === 200){
-            setUser({username:userEmail || ""});
             // transition
             inputRef.current?.classList.add("text-green-400");
-            titleTransition("Heslo");
-            formTransition(<PasswordGrabber  handleSubmit={handlePasswordSubmit} handleAccountChange={handleAccountChange} />);
+            titleTransition("Přihlášení");
+            formTransition(<PasswordGrabber  handleSubmit={handlePasswordSubmit} handleAccountChange={handleAccountChange} username={username} />);
             return;
         }
 
@@ -174,7 +170,7 @@ const LoginPage:NextPage = () => {
      * @returns Nothing
      */
     const handlePasswordSubmit = async (
-        e : React.MouseEvent<HTMLInputElement,MouseEvent>,
+        e : React.FormEvent<HTMLInputElement>,
         inputRef: React.MutableRefObject<HTMLInputElement | null>
     ) => {
     e.preventDefault();
