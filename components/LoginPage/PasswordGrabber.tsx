@@ -29,14 +29,14 @@ const PasswordGrabber = (
 
     return (
         <div
-            className='flex flex-col justify-center items-center mx-5'
+            className='flex flex-col justify-center items-center -mt-3 mx-5'
         >
                 <div 
                     className='flex flex-col justify-center items-center'
                 >
-                    <h2 className='text-left w-full text-lg -mb-1 '>Přihlášení k účtu:</h2>
+                    <h2 className='text-left w-full text-lg -mb-1'>Účet:</h2>
                     <p 
-                        className='text-left w-full h-12 ml-2 -mb-2 font-semibold'
+                        className='text-left w-full h-12 font-semibold ml-2 -mb-2'
                         >{username}@teleinformatika.eu
                     </p>
                     <p 
