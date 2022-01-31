@@ -2,7 +2,7 @@ import React, {  useRef } from 'react';
 
 interface ComponentProps{
     handleSubmit: (
-        e:React.MouseEvent<HTMLInputElement,MouseEvent>,
+        e:React.MouseEvent<HTMLInputElement,MouseEvent>|React.KeyboardEvent<HTMLInputElement>,
         code: string,
         codesDivRef: React.MutableRefObject<HTMLDivElement|null>
     ) => void,
@@ -60,6 +60,11 @@ const CodeGrabber = (
     const valueCheck = (
         e:React.KeyboardEvent<HTMLInputElement>
     ) => {
+        // Enter check
+        if(e.key === "Enter"){
+            handleSubmit(e,collectCodes(), codesDivRef);
+            return
+        }
         // length check
         if(e.currentTarget.value.toString().length == 1){
             if(!parseInt(e.key.toString())){

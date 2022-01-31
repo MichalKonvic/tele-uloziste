@@ -90,7 +90,7 @@ const LoginPage:NextPage = () => {
      * Registration code submit handling function
      */
     const handleRegistrationCodeSubmit = async (
-        e:React.MouseEvent<HTMLInputElement,MouseEvent>,
+        e:React.MouseEvent<HTMLInputElement,MouseEvent>|React.KeyboardEvent<HTMLInputElement>,
         code: string,
         codesDivRef: React.MutableRefObject<HTMLDivElement|null>
     ) => {
