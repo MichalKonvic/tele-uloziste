@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Head from 'next/head'
 import { NextPage } from 'next';
 import { motion, useAnimation } from 'framer-motion';
@@ -22,6 +22,7 @@ const LoginPage:NextPage = () => {
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const titleAnimation = useAnimation();
     const sectionAnimation = useAnimation();
+    const sectionRef:React.MutableRefObject<HTMLDivElement|null> = useRef(null);
     const [user,setUser] = useState({username: ""});
 
 
@@ -41,37 +42,37 @@ const LoginPage:NextPage = () => {
     const formTransition = (
         component: JSX.Element
     )=>{
+        // Every animation duration is 300ms
+        sectionAnimation.start({x:-480});
         setTimeout(() => {
-            sectionAnimation.start({x:-480,opacity:0});
+            sectionRef.current?.classList.remove("duration-300");
+            sectionRef.current?.classList.add("opacity-0");
             setTimeout(() => {
                 sectionAnimation.start({x:480});
-            }, 400);
-            setTimeout(() => {
-                sectionAnimation.start({opacity:1});
-            }, 600);
-            setTimeout(() => {
-                setFormSection(component);
-                sectionAnimation.start({x:0});
-            }, 1000);
-        }, 100);
+                setTimeout(() => {
+                    sectionRef.current?.classList.remove("opacity-0");
+                    sectionRef.current?.classList.add("duration-300");
+                    setFormSection(component);
+                    sectionAnimation.start({x:0});
+                }, 100);
+            }, 100);
+        }, 300);
     }
 
     const titleTransition = (
         title: string
     )=>{
+        titleAnimation.start({y:-100,opacity:0});
         setTimeout(() => {
-            titleAnimation.start({y:-100,opacity:0});
-            setTimeout(() => {
-                titleAnimation.start({y:100});
-            }, 400);
-            setTimeout(() => {
-                titleAnimation.start({opacity:1});
-            }, 600);
-            setTimeout(() => {
-                setFormTitle(title)
-                titleAnimation.start({y:0});
-            }, 1000);
-        }, 100);
+            titleAnimation.start({y:100});
+        }, 300);
+        setTimeout(() => {
+            titleAnimation.start({opacity:1});
+        }, 600);
+        setTimeout(() => {
+            setFormTitle(title)
+            titleAnimation.start({y:0});
+        }, 640);
     }
 
     /**
@@ -224,6 +225,7 @@ const LoginPage:NextPage = () => {
                     initial={{x:480}}
                     animate={sectionAnimation}
                     className='duration-300 ease-out'
+                    ref={sectionRef}
                 >
                     {formSection}
                 </motion.div>
