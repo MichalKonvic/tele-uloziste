@@ -1,5 +1,5 @@
 import React, {  useRef } from 'react';
-
+import useCountdown from '../../hooks/useCountdown';
 interface ComponentProps{
     handleSubmit: (
         e:React.MouseEvent<HTMLInputElement,MouseEvent>|React.KeyboardEvent<HTMLInputElement>,
@@ -19,7 +19,19 @@ const CodeGrabber = (
         handleAccountChange,
     }:ComponentProps
 ) => {
+    let [codeCountdown,] = useCountdown(300);
     const codesDivRef = useRef<HTMLDivElement>(null);
+
+    const CountdownTimer = () => {
+        const minutes = Math.floor(codeCountdown / 60);
+        const seconds = codeCountdown % 60 < 10? `0${codeCountdown % 60}`: codeCountdown % 60;
+        return(
+            <React.Fragment>
+                {`${minutes||"00"}:${seconds}`}
+            </React.Fragment>
+        );
+    }
+    
     const focusNextChild = (
         e: React.FormEvent<HTMLDivElement>
     ) => {
@@ -87,7 +99,7 @@ const CodeGrabber = (
         }
         return arrayCodes.join("");
     }
-
+    
     return (
         <div
             className='flex flex-col justify-center items-center'
@@ -110,7 +122,7 @@ const CodeGrabber = (
                 <input id="4" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
                 <input id="5" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
             </div>
-            <p className='w-full text-right mr-3 mt-1 text-lg text-gray-800'>4:48</p>
+            <p className='w-full text-right mr-3 mt-1 text-lg text-gray-800'><CountdownTimer/></p>
             <div className='flex items-center w-full justify-between px-5'>
                 <button onClick={(e) => handleAccountChange(e)} className='border-4 border-violet-500 text-white rounded-full w-12 h-12 flex box-border pl-3 items-center hover:border-violet-600 duration-200'><BackArrow/></button>
                 <input type="submit" onClick={(e) => {
