@@ -38,6 +38,41 @@ const LoginPage:NextPage = () => {
     },[]);
 
 
+    const formTransition = (
+        component: JSX.Element
+    )=>{
+        setTimeout(() => {
+            sectionAnimation.start({x:-480,opacity:0});
+            setTimeout(() => {
+                sectionAnimation.start({x:480});
+            }, 400);
+            setTimeout(() => {
+                sectionAnimation.start({opacity:1});
+            }, 600);
+            setTimeout(() => {
+                setFormSection(component);
+                sectionAnimation.start({x:0});
+            }, 1000);
+        }, 100);
+    }
+
+    const titleTransition = (
+        title: string
+    )=>{
+        setTimeout(() => {
+            titleAnimation.start({y:-100,opacity:0});
+            setTimeout(() => {
+                titleAnimation.start({y:100});
+            }, 400);
+            setTimeout(() => {
+                titleAnimation.start({opacity:1});
+            }, 600);
+            setTimeout(() => {
+                setFormTitle(title)
+                titleAnimation.start({y:0});
+            }, 1000);
+        }, 100);
+    }
 
     /**
      * Account change handling function
@@ -47,24 +82,8 @@ const LoginPage:NextPage = () => {
     ) => {
         e.preventDefault();
         setUser({email:""})
-        setTimeout(() => {
-            titleAnimation.start({y:-100,opacity:0});
-            sectionAnimation.start({x:-480,opacity:0});
-            setTimeout(() => {
-                titleAnimation.start({y:100});
-                sectionAnimation.start({x:480});
-            }, 400);
-            setTimeout(() => {
-                sectionAnimation.start({opacity:1});
-                titleAnimation.start({opacity:1});
-            }, 600);
-            setTimeout(() => {
-                setFormTitle("Tele Cloud")
-                titleAnimation.start({y:0});
-                setFormSection(<EmailGrabber handleSubmit={handleEmailSubmit}/>);
-                sectionAnimation.start({x:0});
-            }, 1000);
-        }, 100);
+        titleTransition("Tele Cloud");
+        formTransition(<EmailGrabber handleSubmit={handleEmailSubmit}/>);
     }
 
     /**
@@ -113,50 +132,19 @@ const LoginPage:NextPage = () => {
             setUser({email:inputRef.current?.value.toLowerCase() || ""});
             // transition
             inputRef.current?.classList.add("text-green-400");
-            setTimeout(() => {
-                titleAnimation.start({y:-100,opacity:0});
-                sectionAnimation.start({x:-480,opacity:0});
-                setTimeout(() => {
-                    titleAnimation.start({y:100});
-                    sectionAnimation.start({x:480});
-                }, 400);
-                setTimeout(() => {
-                    sectionAnimation.start({opacity:1});
-                    titleAnimation.start({opacity:1});
-                }, 600);
-                setTimeout(() => {
-                    setFormTitle("Heslo")
-                    titleAnimation.start({y:0});
-                    setFormSection(<PasswordGrabber  handleSubmit={handlePasswordSubmit} handleAccountChange={handleAccountChange} />);
-                    sectionAnimation.start({x:0});
-                }, 1000);
-            }, 100);
-
+            titleTransition("Heslo");
+            formTransition(<PasswordGrabber  handleSubmit={handlePasswordSubmit} handleAccountChange={handleAccountChange} />);
             return;
         }
 
         if(validationResponse.statusCode === 404){
             // TODO send email to grabbed email with confirmation code
 
-
-            setTimeout(() => {
-                titleAnimation.start({y:-100,opacity:0});
-                sectionAnimation.start({x:-480,opacity:0});
-                setTimeout(() => {
-                    titleAnimation.start({y:100});
-                    sectionAnimation.start({x:480});
-                }, 400);
-                setTimeout(() => {
-                    sectionAnimation.start({opacity:1});
-                    titleAnimation.start({opacity:1});
-                }, 600);
-                setTimeout(() => {
-                    setFormTitle("Registrace")
-                    titleAnimation.start({y:0});
-                    setFormSection(<CodeGrabber  handleSubmit={handleRegistrationCodeSubmit} handleAccountChange={handleAccountChange} />);
-                    sectionAnimation.start({x:0});
-                }, 1000);
-            }, 100);
+            titleTransition("Registrace");
+            // TODO FIXME add remainning time
+            formTransition(
+                <CodeGrabber  handleSubmit={handleRegistrationCodeSubmit} handleAccountChange={handleAccountChange} remainingTime={100} />
+            );
             return;
         }
         // invalid style
