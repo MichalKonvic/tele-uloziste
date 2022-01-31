@@ -77,9 +77,9 @@ const LoginPage:NextPage = () => {
      * Account change handling function
      */
     const handleAccountChange = async (
-        e:React.MouseEvent<HTMLButtonElement,MouseEvent>
+        e?:React.MouseEvent<HTMLButtonElement,MouseEvent>
     ) => {
-        e.preventDefault();
+        e?.preventDefault();
         titleTransition("Tele Cloud");
         formTransition(<EmailGrabber handleSubmit={handleEmailSubmit}/>);
     }

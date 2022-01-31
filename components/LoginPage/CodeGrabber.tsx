@@ -1,4 +1,4 @@
-import React, {  useRef } from 'react';
+import React, {  useRef,useEffect } from 'react';
 import useCountdown from '../../hooks/useCountdown';
 interface ComponentProps{
     handleSubmit: (
@@ -7,7 +7,7 @@ interface ComponentProps{
         codesDivRef: React.MutableRefObject<HTMLDivElement|null>
     ) => void,
     handleAccountChange: (
-        e:React.MouseEvent<HTMLButtonElement,MouseEvent>
+        e?:React.MouseEvent<HTMLButtonElement,MouseEvent>
     ) => void,
     remainingTime: number
 }
@@ -22,6 +22,13 @@ const CodeGrabber = (
     let [codeCountdown,] = useCountdown(300);
     const codesDivRef = useRef<HTMLDivElement>(null);
 
+    // Exit registration when code expires
+    useEffect(() => {
+        if(codeCountdown !== 0)return;
+        handleAccountChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [codeCountdown]);
+    
     const CountdownTimer = () => {
         const minutes = Math.floor(codeCountdown / 60);
         const seconds = codeCountdown % 60 < 10? `0${codeCountdown % 60}`: codeCountdown % 60;
@@ -104,7 +111,7 @@ const CodeGrabber = (
         <div
             className='flex flex-col justify-center items-center'
         >
-            <p className='text-lg w-full text-left mb-2 font-medium'>Zadejte kód z Emailu</p>
+            <p className='text-lg w-full text-left mb-2 font-medium'>Zadejte kód z Emailu:</p>
             <div
                 className='flex gap-2 defaultCode-LoginPage'
                 ref={codesDivRef}
