@@ -3,7 +3,7 @@ import {randomInt} from 'crypto'
 import createTransporter from "../../../lib/mailProvider";
 
 interface requestBodyI{
-    sendToMail: string
+    sendToEmail: string
 }
 type responseDataT = {
     statusCode: number,
@@ -16,7 +16,7 @@ export default async function handler(
     res: NextApiResponse<responseDataT>
 ) {
     // TODO add cors
-
+    // TODO add auth. token check
     let parsedBody: requestBodyI | undefined = undefined;
     let authCode:string = randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString();
     try {
@@ -28,7 +28,7 @@ export default async function handler(
         });
         return;
     }
-    if (!parsedBody?.sendToMail) {
+    if (!parsedBody?.sendToEmail) {
         res.status(400).json({
             statusCode: 400,
             message: "Chybí parametry"
@@ -39,7 +39,7 @@ export default async function handler(
     try {
         await transporter.sendMail({
             from: '"Robo z Tele Cloudu" <tele-cloud@email.cz>', // sender address
-            to: parsedBody?.sendToMail, // list of receivers
+            to: parsedBody?.sendToEmail, // list of receivers
             subject: "Tele Cloud registrace", // Subject line
             text: `Ahoj, tvůj registrační kód ke službě Tele Cloud je: ${authCode}`, // plain text body
             html: `<html>
@@ -81,6 +81,7 @@ export default async function handler(
         });
         return
     } catch (error) {
+        console.error(error)
         res.status(500).json({
             statusCode: 500,
             message: "Email se nepovedlo odeslat",

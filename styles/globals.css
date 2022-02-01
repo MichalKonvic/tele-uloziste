@@ -20,8 +20,13 @@ a {
 }
 
 @layer components {
+  .invalidPassword-LoginPage {
+    @apply border-red-500 border-2
+  }
+  .validPassword-LoginPage {
+    @apply border-green-400 border-2
+  }
   .invalidCode-LoginPage input[type=tel] {
-    
     @apply border-red-400 bg-red-100 text-red-500
   }
   .defaultCode-LoginPage input[type=tel]{
