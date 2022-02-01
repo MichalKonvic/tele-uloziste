@@ -8,9 +8,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/nodemailer": "^6.4.4",
+    "cors": "^2.8.5",
     "framer-motion": "^6.2.3",
     "mongoose": "^6.1.8",
     "next": "12.0.8",
+    "nodemailer": "^6.7.2",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
