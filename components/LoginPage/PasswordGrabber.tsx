@@ -3,7 +3,7 @@ import LoaderButton from '../loaders/LoaderButton';
 import { motion } from 'framer-motion'
 interface ComponentProps {
     handleSubmit: (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
         password: string | undefined
     ) => void,
     handleAccountChange: (
@@ -55,6 +55,7 @@ const PasswordGrabber = (
             animate={{ x: 0 }}
             exit={{ x: -480 }}
             className='flex flex-col justify-center items-center -mt-3 mx-5'
+            onKeyPress={(e) => e.key === "Enter" && handleSubmit(e, inputRef.current?.value)}
         >
             <div
                 className='flex flex-col justify-center items-center'
@@ -71,6 +72,7 @@ const PasswordGrabber = (
                 </p>
                 <label className='flex justify-end items-center mb-2'>
                     <input
+                        tabIndex={1}
                         ref={inputRef}
                         onInput={() => setStyle("default")}
                         autoComplete="off"
@@ -81,19 +83,20 @@ const PasswordGrabber = (
                     />
                     {
                         inputType === "password"
-                            ? <button onClick={(e) => { e.preventDefault(); setInputType("text") }} className='select-none scale-[0.35] w-20 h-20 -mr-5 absolute flex justify-center items-center cursor-pointer'><ShowIcon /></button>
-                            : <button onClick={(e) => { e.preventDefault(); setInputType("password") }} className='select-none scale-[0.35] w-20 h-20 -mr-5 absolute flex justify-center items-center cursor-pointer'><HideIcon /></button>
+                            ? <button tabIndex={3} onClick={(e) => { e.preventDefault(); setInputType("text") }} className='select-none scale-[0.35] w-20 h-20 -mr-5 absolute flex justify-center items-center cursor-pointer'><ShowIcon /></button>
+                            : <button tabIndex={3} onClick={(e) => { e.preventDefault(); setInputType("password") }} className='select-none scale-[0.35] w-20 h-20 -mr-5 absolute flex justify-center items-center cursor-pointer'><HideIcon /></button>
                     }
                 </label>
             </div>
             <div
                 className='flex items-center w-full justify-between'>
                 <button
+                    tabIndex={4}
                     onClick={(e) => handleAccountChange(e)}
                     className='border-4 border-violet-500 text-white rounded-full w-12 h-12 flex box-border pl-3 items-center hover:border-violet-600 duration-200'
                 ><BackArrow />
                 </button>
-                <button onClick={(e) => handleSubmit(e, inputRef.current?.value)}>
+                <button tabIndex={2} onClick={(e) => handleSubmit(e, inputRef.current?.value)}>
                     <LoaderButton isLoading={isLoading}>Pokračovat</LoaderButton>
                 </button>
             </div>
@@ -124,7 +127,7 @@ const HideIcon = () => {
 }
 const ShowIcon = () => {
     return (
-        <svg width="707" height="408" viewBox="0 0 707 408" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100" height="50" viewBox="0 0 707 408" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="path-1-inside-1_51_66" fill="white">
                 <path fillRule="evenodd" clipRule="evenodd" d="M259.915 368.219C188.774 350.619 112.967 304.349 38.158 210.565C40.112 208.222 42.4514 205.468 45.1612 202.364C54.594 191.558 68.4864 176.538 86.2047 159.836C121.738 126.34 172.177 86.5348 232.461 60.1209C292.598 33.7722 362.045 20.9341 436.453 40.3864C508.556 59.2361 587.122 108.879 667.338 209.669C665.4 211.704 663.136 214.044 660.56 216.648C650.564 226.748 635.887 240.787 617.292 256.402C580.012 287.706 527.423 324.965 465.594 349.705C403.852 374.411 333.476 386.419 259.915 368.219ZM698.351 220.25L687 210.444C698.351 220.25 698.345 220.257 698.338 220.265L698.317 220.289L698.25 220.366C698.195 220.429 698.119 220.517 698.021 220.629C697.825 220.852 697.544 221.171 697.179 221.58C696.45 222.399 695.385 223.581 693.998 225.089C691.222 228.105 687.152 232.426 681.883 237.75C671.349 248.395 655.994 263.077 636.583 279.377C597.849 311.901 542.521 351.236 476.739 377.558C410.87 403.915 333.94 417.438 252.71 397.341C171.368 377.217 87.5144 323.823 7.123 219.606L0.129055 210.539L7.03141 201.402L19 210.444C7.03141 201.402 7.03697 201.395 7.0438 201.386L7.06379 201.36L7.1265 201.277C7.1784 201.209 7.25045 201.115 7.34251 200.995C7.52661 200.755 7.79074 200.413 8.13367 199.973C8.81948 199.095 9.82069 197.827 11.1274 196.21C13.7405 192.976 17.5778 188.344 22.5604 182.636C32.5207 171.225 47.0861 155.483 65.6266 138.006C102.611 103.142 155.893 60.9163 220.422 32.6428C285.1 4.30416 361.559 -10.2014 444.041 11.3618C526.496 32.9182 613.046 90.017 698.877 201.282L706.358 210.981L698.351 220.25ZM353.5 341C429.439 341 491 279.439 491 203.5C491 127.561 429.439 66 353.5 66C277.561 66 216 127.561 216 203.5C216 279.439 277.561 341 353.5 341Z" />
             </mask>
