@@ -12,24 +12,149 @@ const LoginPage: NextPage = () => {
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const [isLoading, setIsLoading] = useState(false);
     const [formStyle, setFormStyle] = useState("default");
+    const [userData, setUserData] = useState({
+        username: "",
+        password: "",
+        method: "",
+        regCode: ""
+    });
+    const [apiEmailValidationResponse, setApiEmailValidationResponse] = useState({
+        statusCode: 0,
+        message: ""
+    });
+    const [apiRegCodeResponse, setApiRegCodeResponse] = useState({
+        statusCode: 0,
+        message: "",
+        authCode: ""
+    });
+
+    useEffect(() => {
+        if (!apiRegCodeResponse.statusCode) return;
+        if (apiRegCodeResponse.statusCode === 200) {
+            let userDataCopy = userData;
+            userDataCopy.regCode = apiRegCodeResponse.authCode;
+            setUserData(userDataCopy);
+            setIsLoading(false);
+            setFormTitle("Registrace");
+            return
+        }
+        setErrorMessage("Došlo k problému");
+        setFormStyle("invalid");
+        setIsLoading(false);
+    }, [apiRegCodeResponse]);
+
+
+    useEffect(() => {
+        if (!apiEmailValidationResponse.statusCode && !apiRegCodeResponse.statusCode) return;
+
+        if (apiEmailValidationResponse.statusCode === 200) {
+            let userDataCopy = userData;
+            userDataCopy.method = 'LOGIN';
+            setUserData(userDataCopy);
+            setIsLoading(false);
+            setFormTitle("Heslo");
+            return;
+        }
+
+        if (apiEmailValidationResponse.statusCode === 404) {
+            let userDataCopy = userData;
+            userDataCopy.method = 'REGISTER';
+            setUserData(userDataCopy);
+            (async () => {
+                try {
+                    const response = await (await fetch(`/api/mail/regauth`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            sendToEmail: `${userData.username}@teleinformatika.eu`
+                        })
+                    })).json();
+                    setApiRegCodeResponse(response);
+                } catch (error) {
+                    setErrorMessage("Došlo k problému");
+                }
+            })()
+            return;
+        }
+
+        setErrorMessage(apiEmailValidationResponse.message);
+        setFormStyle("invalid");
+        setIsLoading(false);
+    }, [apiEmailValidationResponse]);
+
+    const validateEmailRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/users/check`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userEmail: `${userData.username}@teleinformatika.eu`
+                })
+            })).json();
+            setApiEmailValidationResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
 
     const handleChangeAccount = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined) => {
         e?.preventDefault();
+        setErrorMessage("");
         // TODO add all kinds of data reset etc. registration data,...
-        setIsLoading(false)
+        setUserData({
+            username: "",
+            password: "",
+            method: "",
+            regCode: ""
+        });
+        setApiEmailValidationResponse({
+            statusCode: 0,
+            message: ""
+        });
+        setApiRegCodeResponse({
+            statusCode: 0,
+            message: "",
+            authCode: ""
+        });
+        setIsLoading(false);
         setFormTitle("Tele Cloud");
     }
 
     const handlePasswordEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
+        setErrorMessage("");
+        if (userData.method === "LOGIN") {
+            // Login route
+            return
+        }
+        if (userData.method === "REGISTER") {
+            // Register route
+            return;
+        }
     }
 
-    const handleEmailEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleEmailEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, username: string) => {
         e.preventDefault();
+        setErrorMessage("");
+        setIsLoading(true);
+        let userDataCopy = userData;
+        userDataCopy.username = username.toLowerCase();
+        setUserData(userDataCopy);
+        validateEmailRequest();
     }
 
-    const handleCodeEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleCodeEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.KeyboardEvent<HTMLInputElement>, regCode: string) => {
         e.preventDefault();
+        setErrorMessage("");
+        setIsLoading(true);
+        if (regCode === userData.regCode) {
+            setFormStyle("valid");
+            setIsLoading(false);
+            setFormTitle("Heslo");
+            setFormStyle("default");
+            return;
+        }
+        setErrorMessage("Kód nesouhlasí");
+        setFormStyle("invalid");
+        setIsLoading(false);
     }
 
     return (
@@ -38,7 +163,7 @@ const LoginPage: NextPage = () => {
                 <title>Tele Cloud</title>
                 <link rel="icon" href="/favicon.svg" />
             </Head>
-            <form className='duration-400 flex items-center flex-col w-full h-full justify-center bg-white md:w-fit md:h-fit md:px-10 md:py-14 md:border md:border-gray-300 md:shadow-xl md:rounded-lg overflow-hidden'>
+            <form className='duration-400 flex items-center flex-col w-full h-full justify-center bg-white md:w-fit md:h-fit md:px-10 md:py-14 md:border md:border-gray-300 md:shadow-xl md:rounded-xl overflow-hidden'>
                 <div className='flex items-center justify-center overflow-hidden py-2'>
                     <AnimatePresence exitBeforeEnter>
                         <motion.h1
@@ -64,7 +189,7 @@ const LoginPage: NextPage = () => {
                         isLoading={isLoading}
                         style={formStyle}
                         setStyle={setFormStyle}
-                        username={"username"}
+                        username={userData.username}
                         handleSubmit={handlePasswordEnter} />}
                     {formTitle == "Registrace" && <CodeGrabber
                         handleAccountChange={handleChangeAccount}

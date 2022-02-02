@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 interface ComponentProps {
     handleSubmit: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        username: string
     ) => void,
     style: string,
     setStyle: React.Dispatch<React.SetStateAction<string>>,
@@ -40,10 +41,10 @@ const EmailGrabber = (
             className='flex flex-col justify-center items-center'
         >
             <div className='grid'>
-                <input ref={inputRef} onInput={() => setStyle("default")} autoComplete="off" placeholder='jméno.příjmení' type="text" id='emailName' className='bg-white text-center w-50 h-12 text-3xl outline-none row-start-1 row-end-2' />
+                <input ref={inputRef} onInput={() => setStyle("default")} disabled={isLoading} autoComplete="off" placeholder='jméno.příjmení' type="text" id='emailName' className='bg-white text-center w-50 h-12 text-3xl outline-none row-start-1 row-end-2' />
                 <p className='row-start-2 row-end-3 col-start-1 col-end-6 text-center text-lg h-12 text-blue-500 font-medium'>@teleinformatika.eu</p>
             </div>
-            <button onClick={(e) => handleSubmit(e)}>
+            <button onClick={(e) => handleSubmit(e, inputRef.current?.value)}>
                 <LoaderButton isLoading={isLoading}>Pokračovat</LoaderButton>
             </button>
         </motion.div>

@@ -77,6 +77,7 @@ const PasswordGrabber = (
                         type={inputType}
                         id='emailName'
                         className='validPassword-LoginPage bg-gray-300 rounded-xl px-2 w-72 h-12 text-2xl outline-none pr-8 text-gray-700'
+                        disabled={isLoading}
                     />
                     {
                         inputType === "password"

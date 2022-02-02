@@ -168,12 +168,12 @@ const CodeGrabber = (
                 onKeyDown={(e) => focusPreviousChild(e)}
                 onPaste={(e) => handlePaste(e)}
             >
-                <input id="0" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
-                <input id="1" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
-                <input id="2" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
-                <input id="3" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
-                <input id="4" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
-                <input id="5" onKeyPress={(e) => valueCheck(e)} type="tel" autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="0" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="1" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="2" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="3" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="4" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
+                <input id="5" onKeyPress={(e) => valueCheck(e)} type="tel" disabled={isLoading} autoCorrect='off' className='duration-300 w-12 h-12 border-2 text-center text-2xl font-bold rounded-xl outline-none appearance-none' />
             </div>
             <p className='w-full text-right mr-3 mt-1 text-lg text-gray-800'><CountdownTimer /></p>
             <div className='flex items-center w-full justify-between px-5'>
