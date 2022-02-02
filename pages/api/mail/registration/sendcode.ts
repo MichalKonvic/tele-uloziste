@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import {randomInt} from 'crypto'
-import createTransporter from "../../../lib/mailProvider";
+import { randomInt } from 'crypto'
+import cache from '../../../../lib/cache'
+import createTransporter from "../../../../lib/mailProvider";
 
 interface requestBodyI{
     sendToEmail: string
@@ -8,7 +9,7 @@ interface requestBodyI{
 type responseDataT = {
     statusCode: number,
     message: string,
-    authCode?:string
+    cacheUID?:string
 }
 
 export default async function handler(
@@ -16,9 +17,8 @@ export default async function handler(
     res: NextApiResponse<responseDataT>
 ) {
     // TODO add cors
-    // TODO add auth. token check
     let parsedBody: requestBodyI | undefined = undefined;
-    let authCode:string = randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString();
+    let regCode:string = randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString();
     try {
         parsedBody = JSON.parse(req.body);
     } catch (error) {
@@ -41,7 +41,7 @@ export default async function handler(
             from: '"Robo z Tele Cloudu" <tele-cloud@email.cz>', // sender address
             to: parsedBody?.sendToEmail, // list of receivers
             subject: "Tele Cloud registrace", // Subject line
-            text: `Ahoj, tvůj registrační kód ke službě Tele Cloud je: ${authCode}`, // plain text body
+            text: `Ahoj, tvůj registrační kód ke službě Tele Cloud je: ${regCode}`, // plain text body
             html: `<html>
     
     <head>
@@ -62,7 +62,7 @@ export default async function handler(
             <p style="font-size: 2rem;">To jsem já Robo 🤖,<br> mám pro tebe ten kód 👇</p>
             <span title="To je ten kód"
                 style="font-size: 3rem; color: rgb(161, 89, 228); font-weight: 900; padding: 1rem 2rem; background-color: rgb(224, 224, 224); margin: 3rem  0.7rem; width: fit-content; text-align: center; letter-spacing: 1rem; border-radius: 10px;">
-                ${authCode}</span>
+                ${regCode}</span>
             <p style="font-size: 2rem;">👆 Tenhle kód platí <b style="color: rgb(230, 86, 86);">5</b> minut. <br>
             <p style="font-size: 1.2rem; margin-left: 0.5rem; margin-top: 3rem; margin-bottom: 3rem;">Rád jsem tě
                 poznal. <br>S pozdravem
@@ -73,11 +73,12 @@ export default async function handler(
     </body>
     
     </html>`, // html body
-    });
+        });
+        const cacheUID = cache.addToMemory(regCode, 310);
         res.status(200).json({
             statusCode: 200,
             message: "Email byl poslán",
-            authCode: authCode
+            cacheUID: cacheUID
         });
         return
     } catch (error) {

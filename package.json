@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/cors": "^2.8.12",
     "@types/nodemailer": "^6.4.4",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "framer-motion": "^6.2.3",
     "mongoose": "^6.1.8",

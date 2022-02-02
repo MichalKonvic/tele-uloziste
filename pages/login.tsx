@@ -25,15 +25,16 @@ const LoginPage: NextPage = () => {
     const [apiRegCodeResponse, setApiRegCodeResponse] = useState({
         statusCode: 0,
         message: "",
-        authCode: ""
+        cacheUID: ""
     });
+    const [apiRegCodeValidationResponse, setApiRegCodeValidationResponse] = useState({
+        statusCode: 0,
+        message: ""
+    })
 
     useEffect(() => {
         if (!apiRegCodeResponse.statusCode) return;
         if (apiRegCodeResponse.statusCode === 200) {
-            let userDataCopy = userData;
-            userDataCopy.regCode = apiRegCodeResponse.authCode;
-            setUserData(userDataCopy);
             setIsLoading(false);
             setFormTitle("Registrace");
             return
@@ -42,6 +43,25 @@ const LoginPage: NextPage = () => {
         setFormStyle("invalid");
         setIsLoading(false);
     }, [apiRegCodeResponse]);
+
+    useEffect(() => {
+        if (!apiRegCodeValidationResponse.statusCode) return;
+        if (apiRegCodeValidationResponse.statusCode === 200) {
+            setFormStyle("valid");
+            setIsLoading(false);
+            setFormStyle("default");
+            setFormTitle("Heslo");
+            return;
+        }
+        if (apiRegCodeValidationResponse.statusCode === 401) {
+            setIsLoading(false);
+            setErrorMessage("Kód nesouhlasí");
+            setFormStyle("ivalid");
+            return;
+        }
+        setErrorMessage("Došlo k problému");
+        setIsLoading(false);
+    }, [apiRegCodeValidationResponse]);
 
 
     useEffect(() => {
@@ -62,7 +82,7 @@ const LoginPage: NextPage = () => {
             setUserData(userDataCopy);
             (async () => {
                 try {
-                    const response = await (await fetch(`/api/mail/regauth`, {
+                    const response = await (await fetch(`/api/mail/registration/sendcode`, {
                         method: 'POST',
                         body: JSON.stringify({
                             sendToEmail: `${userData.username}@teleinformatika.eu`
@@ -95,6 +115,22 @@ const LoginPage: NextPage = () => {
         }
     }
 
+    const validateRegCodeRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/mail/registration/validatecode`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    uID: apiRegCodeResponse.cacheUID,
+                    regCode: userData.regCode
+                })
+            })).json();
+            setApiRegCodeValidationResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
+
+
     const handleChangeAccount = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined) => {
         e?.preventDefault();
         setErrorMessage("");
@@ -112,8 +148,12 @@ const LoginPage: NextPage = () => {
         setApiRegCodeResponse({
             statusCode: 0,
             message: "",
-            authCode: ""
+            cacheUID: ""
         });
+        setApiRegCodeValidationResponse({
+            statusCode: 0,
+            message: ""
+        })
         setIsLoading(false);
         setFormTitle("Tele Cloud");
     }
@@ -145,16 +185,10 @@ const LoginPage: NextPage = () => {
         e.preventDefault();
         setErrorMessage("");
         setIsLoading(true);
-        if (regCode === userData.regCode) {
-            setFormStyle("valid");
-            setIsLoading(false);
-            setFormTitle("Heslo");
-            setFormStyle("default");
-            return;
-        }
-        setErrorMessage("Kód nesouhlasí");
-        setFormStyle("invalid");
-        setIsLoading(false);
+        let userDataCopy = userData;
+        userDataCopy.regCode = regCode;
+        setUserData(userDataCopy);
+        validateRegCodeRequest();
     }
 
     return (
