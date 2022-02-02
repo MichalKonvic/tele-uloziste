@@ -1,18 +1,18 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import cache from '../../../../lib/cache';
-type Data = {
+type responseDataT = {
     message:string,
     statusCode:number
 }
 
 export default function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Data>
+    res: NextApiResponse<responseDataT>
 ) {
     try {
         const parsedBody: {uID:string,regCode: string} = JSON.parse(req.body);
-        const serverRegCode:string|undefined = cache.find(parsedBody.uID)?.data || undefined;
+        const serverRegCode:string|undefined = cache.find(parsedBody.uID)?.data;
         const clientRegCode:string|undefined = parsedBody.regCode || undefined;
         if (!clientRegCode) {
             res.status(400).json({ message: "Nebyl zadán kód", statusCode: 400 });
@@ -32,7 +32,6 @@ export default function handler(
         }
         res.status(500).json({ message: "Checks failed", statusCode: 500 });
     } catch (error) {
-        console.log(error);
         res.status(500).json({message:"Nelze načíst tělo requestu",statusCode:500});
     }
 }

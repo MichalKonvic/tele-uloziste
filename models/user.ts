@@ -1,15 +1,9 @@
 import mongoose from 'mongoose';
 
-const validateEmail = (email: string): boolean => {
-    return /(.*)\.(.*)@teleinformatika\.eu/.test(email);
-}
-
 const userSchema = new mongoose.Schema({
     email:{
         type: String,
-        required: [true, "User must have email"],
-        validate: [validateEmail,"Email didnt pass the check"],
-        match:[/(.*)\.(.*)@teleinformatika\.eu/,"Email didnt pass the check"]
+        required: [true, "User must have email"]
     },
     password: {
         type: String,

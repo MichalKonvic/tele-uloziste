@@ -82,7 +82,6 @@ export default async function handler(
         });
         return
     } catch (error) {
-        console.error(error)
         res.status(500).json({
             statusCode: 500,
             message: "Email se nepovedlo odeslat",

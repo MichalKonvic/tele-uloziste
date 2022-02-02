@@ -31,6 +31,22 @@ const LoginPage: NextPage = () => {
         statusCode: 0,
         message: ""
     })
+    const [apiRegistrationResponse, setApiRegistrationResponse] = useState({
+        statusCode: 0,
+        message: ""
+    })
+
+    useEffect(() => {
+        if (!apiRegistrationResponse.statusCode) return;
+        if (apiRegistrationResponse.statusCode === 201) {
+            setIsLoading(false);
+            setFormTitle("Vítej");
+            return;
+        }
+        setErrorMessage("Došlo k problému");
+        setIsLoading(false);
+    }, [apiRegistrationResponse]);
+
 
     useEffect(() => {
         if (!apiRegCodeResponse.statusCode) return;
@@ -154,19 +170,42 @@ const LoginPage: NextPage = () => {
             statusCode: 0,
             message: ""
         })
+        setApiRegistrationResponse({
+            statusCode: 0,
+            message: ""
+        });
         setIsLoading(false);
         setFormTitle("Tele Cloud");
     }
 
-    const handlePasswordEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const registerAccountRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/users/register`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userEmail: `${userData.username}@teleinformatika.eu`,
+                    password: userData.password
+                })
+            })).json();
+            setApiRegistrationResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
+
+    const handlePasswordEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, password: string) => {
         e.preventDefault();
         setErrorMessage("");
+        setIsLoading(true);
         if (userData.method === "LOGIN") {
             // Login route
             return
         }
         if (userData.method === "REGISTER") {
-            // Register route
+            let userDataCopy = userData;
+            userDataCopy.password = password;
+            setUserData(userDataCopy);
+            registerAccountRequest();
             return;
         }
     }
