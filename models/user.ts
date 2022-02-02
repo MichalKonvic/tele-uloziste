@@ -1,9 +1,15 @@
 import mongoose from 'mongoose';
 
+const getCurDate = () => {
+    return new Date().getTime();
+}
+
 const userSchema = new mongoose.Schema({
     email:{
         type: String,
-        required: [true, "User must have email"]
+        required: [true, "User must have email"],
+        lowercase: true,
+        unique: [true, "User with this email already exists"]
     },
     password: {
         type: String,
@@ -16,11 +22,13 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         immutable: true,
-        default: () => new Date()
+        default: () => Date(),
     },
     updatedAt: {
         type: Date,
-        default: () => new Date()
-    }
+    },
+    lastLoginAt: {
+        type: Date,
+    },
 })
 export default mongoose.models.User || mongoose.model('User',userSchema);

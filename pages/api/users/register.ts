@@ -35,6 +35,7 @@ export default async function handler(
         })
         return;
     }
+
     try {
         const user = new User({ email: parsedBody.userEmail, password: await hash(parsedBody.password, 10) });
         await user.save();
@@ -43,6 +44,7 @@ export default async function handler(
             message: "Uživatel zaregistrován"
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             statusCode: 500,
             message: "Došlo k problému"
