@@ -6,6 +6,7 @@ import {hash} from 'bcryptjs';
 type resDataT ={
     statusCode: number,
     message: string,
+    token?: string
 }
 
 export default async function handler(
@@ -37,11 +38,13 @@ export default async function handler(
     }
 
     try {
+        //TODO add jwt token
         const user = new User({ email: parsedBody.userEmail, password: await hash(parsedBody.password, 10) });
         await user.save();
         res.status(201).json({
             statusCode: 201,
-            message: "Uživatel zaregistrován"
+            message: "Uživatel zaregistrován",
+            token: "sfsd"
         });
     } catch (error) {
         console.log(error);

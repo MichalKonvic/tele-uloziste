@@ -33,12 +33,39 @@ const LoginPage: NextPage = () => {
     })
     const [apiRegistrationResponse, setApiRegistrationResponse] = useState({
         statusCode: 0,
-        message: ""
+        message: "",
+        token: ""
     })
+    const [apiLoginResponse, setApiLoginResponse] = useState({
+        statusCode: 0,
+        message: "",
+        token: ""
+    })
+    // TODO HERE
+    useEffect(() => {
+        if (!apiLoginResponse.statusCode) return;
+        if (apiLoginResponse.statusCode === 200) {
+            // TODO save somewhere jwt token
+            setIsLoading(false);
+            setFormTitle("Vítej");
+            return;
+        }
+        if (apiLoginResponse.statusCode === 401) {
+            // TODO save somewhere jwt token
+            setIsLoading(false);
+            setErrorMessage("Špatné heslo");
+            setFormStyle("invalid");
+            return;
+        }
+        setErrorMessage("Došlo k problému");
+        setIsLoading(false);
+    }, [apiLoginResponse]);
 
+    // TODO HERE
     useEffect(() => {
         if (!apiRegistrationResponse.statusCode) return;
         if (apiRegistrationResponse.statusCode === 201) {
+            // TODO save somewhere jwt token
             setIsLoading(false);
             setFormTitle("Vítej");
             return;
@@ -172,7 +199,13 @@ const LoginPage: NextPage = () => {
         })
         setApiRegistrationResponse({
             statusCode: 0,
-            message: ""
+            message: "",
+            token: ""
+        });
+        setApiLoginResponse({
+            statusCode: 0,
+            message: "",
+            token: ""
         });
         setIsLoading(false);
         setFormTitle("Tele Cloud");
@@ -193,12 +226,30 @@ const LoginPage: NextPage = () => {
         }
     }
 
+    const loginAccountRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/users/login`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userEmail: `${userData.username}@teleinformatika.eu`,
+                    password: userData.password
+                })
+            })).json();
+            setApiLoginResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
+
     const handlePasswordEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, password: string) => {
         e.preventDefault();
         setErrorMessage("");
         setIsLoading(true);
         if (userData.method === "LOGIN") {
-            // Login route
+            let userDataCopy = userData;
+            userDataCopy.password = password;
+            setUserData(userDataCopy);
+            loginAccountRequest();
             return
         }
         if (userData.method === "REGISTER") {

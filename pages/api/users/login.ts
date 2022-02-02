@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 import {compare} from 'bcryptjs';
-import user from "../../../models/user";
 
 type resDataT ={
     statusCode: number,
