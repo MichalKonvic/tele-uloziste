@@ -3,6 +3,7 @@ import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 import {hash} from 'bcryptjs';
 import cache from "../../../lib/cache";
+import { serverURL } from "../../../config";
 
 type resDataT ={
     statusCode: number,
@@ -72,6 +73,23 @@ export default async function handler(
         //TODO add jwt token
         const user = new User({ email: parsedBody.userEmail, password: await hash(parsedBody.password, 10),updatedAt: Date(), lastLoginAt: Date() });
         await user.save();
+
+        // Send mail
+        const welcomeMailReqResponse = await (await fetch(`${serverURL}/api/mail/sendwelcome`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.API_KEY}`,
+            },
+            body: JSON.stringify({
+                email: parsedBody.userEmail
+            })
+        })).json();
+        if (welcomeMailReqResponse.statusCode !== 200) {
+            console.warn({
+                errorMessage: `Recieved ${welcomeMailReqResponse.statusCode} in '/api/mail/register.ts'line 89`,
+                response: welcomeMailReqResponse
+            });
+        }
         res.status(201).json({
             statusCode: 201,
             message: "Uživatel zaregistrován",
