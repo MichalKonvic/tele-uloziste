@@ -83,7 +83,11 @@ export default async function handler(
     
     </html>`, // html body
         });
-        const cacheUID = cache.addToMemory(regCode, 310);
+        const cacheUID = cache.addToMemory({
+            registrationCode: regCode,
+            registrationEmail: parsedBody.sendToEmail,
+            isValidated: false
+        }, 600);
         res.status(200).json({
             statusCode: 200,
             message: "Email byl poslán",

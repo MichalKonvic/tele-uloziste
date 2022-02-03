@@ -3,11 +3,11 @@ import {randomUUID} from 'crypto'
 interface memoryI{
     uID: string,
     data: any,
-    deleteFunction: () => void
+    deleteFunction: (deleteTime:number) => any
 }
 
 class tempMemory {
-    memory: memoryI[] = [];
+    #memory: memoryI[] = [];
     /**
      * Temporary saves data
      * @param data data to save
@@ -16,21 +16,25 @@ class tempMemory {
      */
     addToMemory(data:any, deleteTime: number) {
         const dataUID: string = randomUUID();
-        this.memory.push({
+        this.#memory.push({
             uID: dataUID,
             data: data,
-            deleteFunction: () => setTimeout(() => {
-                this.deleteFromMemory(dataUID);
-            }, deleteTime * 1000)
+            deleteFunction: (deleteAfter:number) => setTimeout(() => {
+                this.deleteFromMemory(dataUID)
+            }, deleteAfter * 1000)
         })
-        this.memory[-0].deleteFunction();
+        this.#memory[-0].deleteFunction(deleteTime);
         return dataUID;
     }
     deleteFromMemory(uID: string) {
-        this.memory = this.memory.filter(memoryData => memoryData.uID !== uID);
+        this.#memory = this.#memory.filter(memoryData => memoryData.uID !== uID);
     }
     find(uID: string) {
-        return this.memory.find(dataMemory => dataMemory.uID === uID);
+        return this.#memory.find(dataMemory => dataMemory.uID === uID)?.data;
+    }
+    setData(uID: string,data: any) {
+        const dataIndex = this.#memory.findIndex(dataMemory => dataMemory.uID === uID);
+        this.#memory[dataIndex].data = data;
     }
 }
 if (!global.cache) {

@@ -1,9 +1,5 @@
 import mongoose from 'mongoose';
 
-const getCurDate = () => {
-    return new Date().getTime();
-}
-
 const userSchema = new mongoose.Schema({
     email:{
         type: String,
@@ -22,13 +18,16 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         immutable: true,
+        required: true,
         default: () => Date(),
     },
     updatedAt: {
         type: Date,
+        required: true,
     },
     lastLoginAt: {
         type: Date,
+        required: true,
     },
 })
 export default mongoose.models.User || mongoose.model('User',userSchema);

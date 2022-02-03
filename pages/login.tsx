@@ -20,10 +20,6 @@ const LoginPage: NextPage = () => {
     });
     const [apiEmailValidationResponse, setApiEmailValidationResponse] = useState({
         statusCode: 0,
-        message: ""
-    });
-    const [apiRegCodeResponse, setApiRegCodeResponse] = useState({
-        statusCode: 0,
         message: "",
         cacheUID: ""
     });
@@ -41,11 +37,22 @@ const LoginPage: NextPage = () => {
         message: "",
         token: ""
     })
+
+    // Style reset
+    useEffect(() => {
+        setFormStyle("default");
+    }, [formTitle]);
+
+
+
+
     // TODO HERE
+    // Login handle    
     useEffect(() => {
         if (!apiLoginResponse.statusCode) return;
         if (apiLoginResponse.statusCode === 200) {
             // TODO save somewhere jwt token
+            setFormStyle("valid");
             setIsLoading(false);
             setFormTitle("Vítej");
             return;
@@ -57,58 +64,58 @@ const LoginPage: NextPage = () => {
             setFormStyle("invalid");
             return;
         }
+        setFormStyle("invalid");
         setErrorMessage("Došlo k problému");
         setIsLoading(false);
     }, [apiLoginResponse]);
 
     // TODO HERE
+    // Registration handle 
     useEffect(() => {
         if (!apiRegistrationResponse.statusCode) return;
         if (apiRegistrationResponse.statusCode === 201) {
             // TODO save somewhere jwt token
+            setFormStyle("valid");
             setIsLoading(false);
             setFormTitle("Vítej");
             return;
         }
+        if (apiRegistrationResponse.statusCode === 410) {
+            setFormStyle("invalid");
+            setIsLoading(false);
+            setErrorMessage(apiRegistrationResponse.message);
+            handleChangeAccount();
+            setFormTitle("Tele Cloud");
+            return;
+        }
+        setFormStyle("invalid");
         setErrorMessage("Došlo k problému");
         setIsLoading(false);
     }, [apiRegistrationResponse]);
 
-
-    useEffect(() => {
-        if (!apiRegCodeResponse.statusCode) return;
-        if (apiRegCodeResponse.statusCode === 200) {
-            setIsLoading(false);
-            setFormTitle("Registrace");
-            return
-        }
-        setErrorMessage("Došlo k problému");
-        setFormStyle("invalid");
-        setIsLoading(false);
-    }, [apiRegCodeResponse]);
-
+    // Registration code handle 
     useEffect(() => {
         if (!apiRegCodeValidationResponse.statusCode) return;
         if (apiRegCodeValidationResponse.statusCode === 200) {
             setFormStyle("valid");
             setIsLoading(false);
-            setFormStyle("default");
             setFormTitle("Heslo");
             return;
         }
         if (apiRegCodeValidationResponse.statusCode === 401) {
             setIsLoading(false);
+            setFormStyle("invalid");
             setErrorMessage("Kód nesouhlasí");
-            setFormStyle("ivalid");
             return;
         }
+        setFormStyle("ivalid");
         setErrorMessage("Došlo k problému");
         setIsLoading(false);
     }, [apiRegCodeValidationResponse]);
 
-
+    // Email check handle 
     useEffect(() => {
-        if (!apiEmailValidationResponse.statusCode && !apiRegCodeResponse.statusCode) return;
+        if (!apiEmailValidationResponse.statusCode) return;
 
         if (apiEmailValidationResponse.statusCode === 200) {
             let userDataCopy = userData;
@@ -118,32 +125,20 @@ const LoginPage: NextPage = () => {
             setFormTitle("Heslo");
             return;
         }
-
-        if (apiEmailValidationResponse.statusCode === 404) {
+        if (apiEmailValidationResponse.statusCode === 404 && apiEmailValidationResponse?.cacheUID) {
             let userDataCopy = userData;
             userDataCopy.method = 'REGISTER';
             setUserData(userDataCopy);
-            (async () => {
-                try {
-                    const response = await (await fetch(`/api/mail/registration/sendcode`, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            sendToEmail: `${userData.username}@teleinformatika.eu`
-                        })
-                    })).json();
-                    setApiRegCodeResponse(response);
-                } catch (error) {
-                    setErrorMessage("Došlo k problému");
-                }
-            })()
+            setIsLoading(false);
+            setFormTitle("Registrace");
             return;
         }
-
         setErrorMessage(apiEmailValidationResponse.message);
         setFormStyle("invalid");
         setIsLoading(false);
     }, [apiEmailValidationResponse]);
 
+    // Email check request
     const validateEmailRequest = async () => {
         try {
             const response = await (await fetch(`/api/users/check`, {
@@ -158,12 +153,13 @@ const LoginPage: NextPage = () => {
         }
     }
 
+    // Registration Code validation request
     const validateRegCodeRequest = async () => {
         try {
             const response = await (await fetch(`/api/mail/registration/validatecode`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    uID: apiRegCodeResponse.cacheUID,
+                    uID: apiEmailValidationResponse.cacheUID,
                     regCode: userData.regCode
                 })
             })).json();
@@ -173,10 +169,42 @@ const LoginPage: NextPage = () => {
         }
     }
 
+    // Account register request
+    const registerAccountRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/users/register`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userEmail: `${userData.username}@teleinformatika.eu`,
+                    password: userData.password,
+                    uID: apiEmailValidationResponse.cacheUID
+                })
+            })).json();
+            setApiRegistrationResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
 
-    const handleChangeAccount = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined) => {
+    // Account login request
+    const loginAccountRequest = async () => {
+        try {
+            const response = await (await fetch(`/api/users/login`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userEmail: `${userData.username}@teleinformatika.eu`,
+                    password: userData.password
+                })
+            })).json();
+            setApiLoginResponse(response);
+        } catch (error) {
+            setErrorMessage("Došlo k problému");
+        }
+    }
+
+
+    const handleChangeAccount = (e?: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined) => {
         e?.preventDefault();
-        setErrorMessage("");
         // TODO add all kinds of data reset etc. registration data,...
         setUserData({
             username: "",
@@ -185,10 +213,6 @@ const LoginPage: NextPage = () => {
             regCode: ""
         });
         setApiEmailValidationResponse({
-            statusCode: 0,
-            message: ""
-        });
-        setApiRegCodeResponse({
             statusCode: 0,
             message: "",
             cacheUID: ""
@@ -209,36 +233,6 @@ const LoginPage: NextPage = () => {
         });
         setIsLoading(false);
         setFormTitle("Tele Cloud");
-    }
-
-    const registerAccountRequest = async () => {
-        try {
-            const response = await (await fetch(`/api/users/register`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    userEmail: `${userData.username}@teleinformatika.eu`,
-                    password: userData.password
-                })
-            })).json();
-            setApiRegistrationResponse(response);
-        } catch (error) {
-            setErrorMessage("Došlo k problému");
-        }
-    }
-
-    const loginAccountRequest = async () => {
-        try {
-            const response = await (await fetch(`/api/users/login`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    userEmail: `${userData.username}@teleinformatika.eu`,
-                    password: userData.password
-                })
-            })).json();
-            setApiLoginResponse(response);
-        } catch (error) {
-            setErrorMessage("Došlo k problému");
-        }
     }
 
     const handlePasswordEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, password: string) => {
