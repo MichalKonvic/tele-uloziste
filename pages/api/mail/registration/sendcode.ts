@@ -4,7 +4,7 @@ import cache from '../../../../lib/cache'
 import createTransporter from "../../../../lib/mailProvider";
 
 interface requestBodyI{
-    sendToEmail: string
+    sendToEmail: string,
 }
 type responseDataT = {
     statusCode: number,
@@ -16,6 +16,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<responseDataT>
 ) {
+
+    const apiKey = req.headers.authorization && req.headers.authorization.split(' ')[1];
     // TODO add cors
     let parsedBody: requestBodyI | undefined = undefined;
     let regCode:string = randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString() + randomInt(9).toString();
@@ -26,6 +28,13 @@ export default async function handler(
             statusCode: 500,
             message: "Nelze převést tělo requestu"
         });
+        return;
+    }
+    if (apiKey !== process.env.API_KEY) {
+        res.status(401).send({
+            statusCode: 401,
+            message: "Špatný API klíč"
+        })
         return;
     }
     if (!parsedBody?.sendToEmail) {
@@ -61,7 +70,7 @@ export default async function handler(
         <article style="display: flex; flex-direction: column; width: fit-content; padding: 1rem;">
             <p style="font-size: 2rem;">To jsem já Robo 🤖,<br> mám pro tebe ten kód 👇</p>
             <span title="To je ten kód"
-                style="font-size: 3rem; color: rgb(161, 89, 228); font-weight: 900; padding: 1rem 2rem; background-color: rgb(224, 224, 224); margin: 3rem  0.7rem; width: fit-content; text-align: center; letter-spacing: 1rem; border-radius: 10px;">
+                style="font-size: 2.75rem; color: rgb(161, 89, 228); font-weight: 900; padding: 1rem 2rem; background-color: rgb(224, 224, 224); margin: 3rem  0.7rem; width: fit-content; text-align: center; letter-spacing: 1rem; border-radius: 10px;">
                 ${regCode}</span>
             <p style="font-size: 2rem;">👆 Tenhle kód platí <b style="color: rgb(230, 86, 86);">5</b> minut. <br>
             <p style="font-size: 1.2rem; margin-left: 0.5rem; margin-top: 3rem; margin-bottom: 3rem;">Rád jsem tě
