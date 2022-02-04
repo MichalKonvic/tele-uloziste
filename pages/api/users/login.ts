@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 import {compare} from 'bcryptjs';
+import generateRefreshToken from "../../../lib/genRefreshToken";
 
 type resDataT ={
     statusCode: number,
@@ -54,8 +55,11 @@ export default async function handler(
             return;
         }
         // Save user login
-        await User.findOneAndUpdate({ email: parsedBody.userEmail }, {updatedAt: Date(), lastLoginAt: Date()});
-        // TODO add jwt token
+        await User.findOneAndUpdate({ email: parsedBody.userEmail }, { updatedAt: Date(), lastLoginAt: Date() });
+        const refreshToken = generateRefreshToken(parsedBody.userEmail);
+        const expirationDate = new Date();
+        expirationDate.setMonth((new Date().getMonth() + 1));
+        res.setHeader('Set-Cookie', `__refresh_token__=${refreshToken}; Expires=${expirationDate}; SameSite=Strict; Secure; HttpOnly`);
         res.status(200).json({
             statusCode: 200,
             message: "Přihlášen",

@@ -4,11 +4,11 @@ import User from "../../../models/user";
 import {hash} from 'bcryptjs';
 import cache from "../../../lib/cache";
 import { serverURL } from "../../../config";
+import generateRefreshToken from "../../../lib/genRefreshToken";
 
 type resDataT ={
     statusCode: number,
-    message: string,
-    token?: string
+    message: string
 }
 
 interface cacheDataI{
@@ -90,10 +90,13 @@ export default async function handler(
                 response: welcomeMailReqResponse
             });
         }
+        const refreshToken = generateRefreshToken(parsedBody.userEmail);
+        const expirationDate = new Date();
+        expirationDate.setMonth((new Date().getMonth() + 1));
+        res.setHeader('Set-Cookie', `__refresh_token__=${refreshToken}; Expires=${expirationDate}; SameSite=Strict; Secure; HttpOnly`);
         res.status(201).json({
             statusCode: 201,
             message: "Uživatel zaregistrován",
-            token: "sfsd"
         });
     } catch (error) {
         console.log(error);

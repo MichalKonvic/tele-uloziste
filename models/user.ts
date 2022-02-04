@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "User must have password"]
     },
-    permissionsToken: {
-        type: String,
+    permissions: {
+        type: Object,
         required: false
     },
     createdAt: {
