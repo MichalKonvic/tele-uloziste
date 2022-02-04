@@ -59,7 +59,7 @@ export default async function handler(
         const refreshToken = generateRefreshToken(parsedBody.userEmail);
         const expirationDate = new Date();
         expirationDate.setMonth((new Date().getMonth() + 1));
-        res.setHeader('Set-Cookie', `__refresh_token__=${refreshToken}; Expires=${expirationDate}; SameSite=Strict; Secure; HttpOnly`);
+        res.setHeader('Set-Cookie', `__refresh_token__=${refreshToken}; Expires=${expirationDate}; SameSite=Strict; Secure; HttpOnly; Path=/`);
         res.status(200).json({
             statusCode: 200,
             message: "Přihlášen",

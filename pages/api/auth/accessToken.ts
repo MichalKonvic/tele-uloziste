@@ -6,7 +6,9 @@ type responseDataT = {
     statusCode: number,
     message: string,
     token?: string,
-    expiresIn?: number
+    expiresIn?: number,
+    email?: string,
+    permissions?: Object
 }
 
 type jwtDataT ={
@@ -18,7 +20,7 @@ export default async function handler(
     res: NextApiResponse<responseDataT>
 ) {
     await dbConnect();
-    const { refreshToken } = req.body;
+    const { __refresh_token__: refreshToken } = req.cookies;
     if (!refreshToken) {
         res.status(400).json({
             statusCode: 400,
@@ -52,13 +54,15 @@ export default async function handler(
             permissions: user.permissions
         }, process.env.JWT_ACCESS_SECRET as string, {
             algorithm: "HS256",
-            expiresIn: 900
+            expiresIn: 910
         });
         res.status(200).json({
             statusCode: 200,
             message: "Verified",
             expiresIn: 900,
-            token: accessToken
+            token: accessToken,
+            email: user.email,
+            permissions: user.permissions
         })
         return;
     } catch (error) {
