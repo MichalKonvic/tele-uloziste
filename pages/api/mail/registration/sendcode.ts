@@ -51,33 +51,7 @@ export default async function handler(
             to: parsedBody?.sendToEmail, // list of receivers
             subject: "Tele Cloud registrace", // Subject line
             text: `Ahoj, tvůj registrační kód ke službě Tele Cloud je: ${regCode}`, // plain text body
-            html: `<html>
-<head>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            color: rgb(63, 63, 63);
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap');
-    </style>
-</head>
-
-<body>
-    <article style="display: flex; flex-direction: column; width: fit-content; padding: 1rem;">
-        <p style="font-size: 1.5rem;">Ověřovací kód tvého Tele Cloud účtu je:</p>
-        <span title="To je ten kód"
-            style="font-size: 2.75rem; color: rgb(161, 89, 228); font-weight: 900; padding: 1rem 2rem; background-color: rgb(224, 224, 224); width: fit-content; text-align: center; letter-spacing: 1rem; border-radius: 10px;">${regCode}</span>
-        <p style="font-size: 1.5rem;">Kód platí <b style="color: rgb(230, 86, 86);">5</b> minut. <br>
-        <p style="font-size: 1.2rem; margin-top: 3rem; margin-bottom: 3rem;">Rád jsem tě
-            poznal. <br>S pozdravem, Robo🤖.
-        </p>
-        </p>
-    </article>
-</body>
-</html>`, // html body
+            html: `<html><head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <style>*{margin: 0; padding: 0; font-family: 'Roboto', sans-serif; color: rgb(63, 63, 63);}@import url('https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap'); @media only screen and (max-width: 600px){.mainContent{max-width: 100% !important; margin: 0 !important;}.mainContent table{height: 100%; border-radius: 0px !important;}}</style></head><body> <div style="margin: 30px auto; width: 600px;" class="mainContent"> <table style="border-radius: 20px; width: 100%; background-color: rgb(225, 225, 225);"> <tr style="height: 75px;"></tr><tr> <th></th> <th><img src="https://raw.githubusercontent.com/MichalKonvic/tele-uloziste/master/public/favicon.svg" alt="Tele Cloud" width="100rem"></th> <th></th> </tr><tr style="height: 20px;"></tr><tr> <th></th> <th> <h1 style="font-size: 2.75rem; font-weight: 500;">Ověřovací kód</h1> </th> <th></th> </tr><tr style="height: 50px;"></tr><tr> <th style="width: 10%;"></th> <th style="border-radius: 10px; padding: 1.5rem; width: 80%; height: fit-content; background-color: white; box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;"> <h2 style="font-weight: 400; font-size: 1.5rem; color: rgb(106, 106, 106);">Tvůj registrační kód: </h2> <hr style="height: 30px; border: none;"> <p style="font-size: 3.5rem; color: rgb(89, 89, 89); letter-spacing: 1.25rem; font-weight: 600;"> ${regCode}</p><hr style="height: 30px; border: none;"> </th> <th style="width: 10%;"></th> </tr><tr style="height: 50px;"></tr><tr> <th></th> <th> <p style="font-weight: 100; font-size: 1.5rem; color: rgb(118, 118, 118);"> Rád jsem tě poznal. <br>S pozdravem, <span style="color: rgb(90, 90, 90); font-weight: 600;">Robo</span>. </span> </th> <th></th> </tr><tr style="height: 75px;"></tr><tr> <th></th> <th> <img src="https://raw.githubusercontent.com/MichalKonvic/tele-uloziste/master/public/long_logo.svg" alt="Tele Cloud" width="215rem"> </th> <th></th> </tr><tr style="height: 50px;"></tr><tr> <th></th> <th style="font-size: 1rem; font-weight: 100; color: gray;">© ${new Date().getFullYear()} Tele Cloud</th> <th></th> </tr><tr style="height: 30px;"></tr></table> </div></body></html>`, // html body
         });
         const cacheUID = cache.addToMemory({
             registrationCode: regCode,
