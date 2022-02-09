@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import jwt, { JsonWebTokenError, Jwt } from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 type responseDataT = {

@@ -8,13 +8,29 @@ interface responseDataI{
     expiratesAt?: Date,
     permissions?: Object
 }
-// TODO timeout to refresh the access token
 const useAuth = () => {
     const { getItem, setItem } = useStorage();
-    const [updateEvent, setUpdateEvent] = useState(false);
     const [isLogged, setIsLogged] = useState(false);
     const [isLoading, setLoading] = useState(true);
 
+    const isTokenValid = async (token: string) => {
+        try {
+            const tokenValidationRes = await (await fetch(`/api/auth/tokenValidation`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: token
+                })
+            })).json();
+            if (tokenValidationRes.statusCode !== 200) return false;
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+    
     const isStorageValid = (): boolean => {
         const storageData = getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, "local");
         if (!storageData) return false;
@@ -24,29 +40,15 @@ const useAuth = () => {
             if (!jsonData.accessToken /*|| !jsonData.permissions*/ || !jsonData.expiratesAt) {
                 return false;
             }
-            // TODO test if access token is valid
             return true;
         } catch (error) {
             return false;
         }
     }
-    const updateTimeout = (expirationDate: Date):NodeJS.Timeout => {
-        return setTimeout(() => {
-            setUpdateEvent(true);
-        }, expirationDate - new Date());
-    }
 
-    // initial Effect
-    useEffect(() => {
-        let updateTokenTimeout:undefined|NodeJS.Timeout = undefined;
-        if (isStorageValid() && !updateEvent) {
-            setIsLogged(true);
-            setLoading(false);
-            return
-        };
-        // FIXME in production change creadentials to same-origin
-        (async () => {
-            try {
+    const getAccessToken = async () => {
+        try {
+                // FIXME in production change creadentials to same-origin
                 const responseAccessToken:responseDataI = await (await fetch(`/api/auth/accessToken`, {
                     credentials: 'include',
                     method: 'POST',
@@ -68,7 +70,6 @@ const useAuth = () => {
                     permissions: responseAccessToken.permissions,
                     expiratesAt: responseAccessToken.expiratesAt
                 }), 'local');
-                if(responseAccessToken.expiratesAt) updateTokenTimeout = updateTimeout(responseAccessToken.expiratesAt);
                 setIsLogged(true);
                 setLoading(false);
             } catch (error) {
@@ -76,15 +77,46 @@ const useAuth = () => {
                 setLoading(false);
                 console.warn("Catched access token fetch error");
             }
-            setUpdateEvent(false);
+    }
+
+    const refreshAccessToken = async () => {
+        try {
+            const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, 'local'))?.accessToken;
+            if (!token) throw new Error("Token is missing");
+            const isValid = await isTokenValid(token);
+            if (!isValid) {
+                getAccessToken();
+                return;
+            }
+            setIsLogged(true);
+            return;
+        } catch (error) {}
+    }
+
+    // initial Effect
+    useEffect(() => {
+        (async () => {
+            if (isStorageValid()) {
+                try {
+                    const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, 'local'))?.accessToken;
+                    if (!token) throw new Error("Token is missing");
+                    const isValid = await isTokenValid(token);
+                    if (!isValid) {
+                        getAccessToken();
+                        return;
+                    }
+                    setIsLogged(true);
+                    setLoading(false);
+                    return;
+                } catch (error) {}
+            };
+            getAccessToken();
         })()
-        return () => {
-            if(updateTokenTimeout) clearTimeout(updateTokenTimeout);
-        }
     });
     return [
         isLogged,
-        isLoading
+        isLoading,
+        refreshAccessToken
     ];
 }
 export default useAuth;
