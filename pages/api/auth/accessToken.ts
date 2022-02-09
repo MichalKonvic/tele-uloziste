@@ -6,8 +6,7 @@ type responseDataT = {
     statusCode: number,
     message: string,
     token?: string,
-    expiresIn?: number,
-    email?: string,
+    expiratesAt?: number,
     permissions?: Object
 }
 
@@ -54,14 +53,13 @@ export default async function handler(
             permissions: user.permissions
         }, process.env.JWT_ACCESS_SECRET as string, {
             algorithm: "HS256",
-            expiresIn: 910
+            expiresIn: 960
         });
         res.status(200).json({
             statusCode: 200,
             message: "Verified",
-            expiresIn: 900,
+            expiratesAt: new Date().setMinutes( new Date().getMinutes() + 15),
             token: accessToken,
-            email: user.email,
             permissions: user.permissions
         })
         return;
