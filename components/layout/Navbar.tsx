@@ -1,69 +1,86 @@
 import React, { useState } from 'react'
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-const Navbar = () => {
-    const [openProfileMenu, setopenProfileMenu] = useState(false)
+import { NextRouter, useRouter } from 'next/router';
+import MessageBox from '../notifications/messageBox';
+const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: NextRouter }) => {
+    const [openProfileMenu, setopenProfileMenu] = useState(false);
+    const MenuItems = () => {
+        return (
+            <motion.div
+                key="menu"
+                initial={{ x: 90 }}
+                animate={{ x: 0 }}
+                exit={{ x: 90 }}
+                transition={{ ease: 'easeOut' }}
+                className='flex gap-2 bg-gray-300 h-12 px-2 justify-center items-center -mr-2 rounded-l-lg z-10'>
+                <div className='hover:bg-gray-400 duration-200 p-2 rounded-md cursor-pointer'
+                    onClick={handleLogout}
+                    title="Odhlásit"
+                >
+                    <LogoutIcon />
+                </div>
+                <div className='hover:bg-gray-400 duration-200 p-2 mr-2 rounded-md cursor-pointer'
+                    onClick={() => router.push("/settings")}
+                    title="Nastavení"
+                >
+                    <SettingsIcon />
+                </div>
+            </motion.div>
+        );
+    }
     return (
-        <div className='flex h-14 w-screen bg-white justify-between px-2 items-center'>
-            <div className='flex items-center gap-2 overflow-hidden'>
+        <motion.div
+            className='flex justify-center items-center'
+        >
+            <AnimatePresence>
+                {openProfileMenu &&
+                    <MenuItems />
+                }
+            </AnimatePresence>
+            <div className='w-full z-20 bg-white rounded-l-lg'>
+                <div className={`duration-200 p-2 mr-1 rounded-lg cursor-pointer h-12 ${openProfileMenu ? "hover:bg-gray-400" : "hover:bg-gray-300"} ${(openProfileMenu ? "bg-gray-300" : "bg-gray-200")}`}
+                    onClick={() => setopenProfileMenu(!openProfileMenu)}
+                    title="Účet"
+                >
+                    <UserIcon />
+                </div>
+            </div>
+        </motion.div>);
+}
+const Navbar = () => {
+    const router = useRouter();
+    const [confirmMessage, setConfigmMessage] = useState({
+        title: "",
+        description: "",
+        primary: "",
+        secondary: ""
+    });
+    const handleLogout = () => {
+        //TODO request to delete refresh token and delete localStorage
+    }
+
+    return (
+        <div className='flex h-14 w-screen bg-white justify-between items-center overflow-hidden'>
+            {confirmMessage?.title && <MessageBox message={confirmMessage} handlePrimary={() => handleLogout()} handleSecondary={() => setConfigmMessage({
+                title: "",
+                description: "",
+                primary: "",
+                secondary: ""
+            })} />}
+            <div className='ml-2 flex items-center gap-2 overflow-hidden'>
                 <Image src="/favicon.svg" width={40} height={40} alt="Logo" className='z-10' />
                 <h1
                     className='text-xl font-semibold text-gray-700'>Tele Cloud</h1>
             </div>
-            <AnimatePresence exitBeforeEnter>
-                <motion.div
-                    layout
-                    className='p-1 rounded-md flex items-center justify-between duration-200 transition-all overflow-hidden'
-                    animate={openProfileMenu ? { width: "9rem", backgroundColor: "rgb(209 213 219)" } : { width: "3.5rem", backgroundColor: "" }}
-                >
-                    {
-                        openProfileMenu ?
-                            <motion.div>
-                                <motion.div
-                                    layout className='w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-md duration-200'
-                                    onClick={() => setopenProfileMenu(!openProfileMenu)}
-                                >
-                                    <CloseArrow />
-                                </motion.div>
-                            </motion.div>
-                            : <motion.div layout className='p-1 w-12 h-12 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-300 duration-200'
-                                onClick={() => setopenProfileMenu(!openProfileMenu)}
-                            >
-                                <div className='w-10 h-10 rounded-full border-2 border-violet-500 bg-white flex items-center justify-center cursor-pointer'>
-                                    <UserIcon />
-                                </div>
-                            </motion.div>
-                    }
-                    {openProfileMenu && <MenuItems />}
-                </motion.div>
-            </AnimatePresence>
+            <Menu handleLogout={() => setConfigmMessage({
+                title: "Odhlásit?",
+                description: "Opravdu se chceš odhlásit?",
+                primary: "Odhlaš mě",
+                secondary: "Zrušit"
+            })} router={router} />
         </div >
     )
-}
-
-const CloseArrow = () => {
-    return (
-        <svg width="30" height="25" viewBox="0 0 59 195" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 16L44 97.5L16 179" stroke="#5338F8" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-const MenuItems = () => {
-    return (
-        <div className='flex gap-2'>
-            <div className='hover:bg-gray-400 duration-200 p-2 rounded-md cursor-pointer'
-                onClick={() => console.log("Settings")}
-            >
-                <SettingsIcon />
-            </div>
-            <div className='hover:bg-gray-400 duration-200 p-2 rounded-md cursor-pointer'
-                onClick={() => console.log("Logout")}
-            >
-                <LogoutIcon />
-            </div>
-        </div>
-    );
 }
 
 const LogoutIcon = () => {
