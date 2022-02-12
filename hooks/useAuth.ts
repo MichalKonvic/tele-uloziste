@@ -69,7 +69,7 @@ const useAuth = () => {
                     accessToken: responseAccessToken.token,
                     permissions: responseAccessToken.permissions,
                     expiratesAt: responseAccessToken.expiratesAt
-                }), 'local');
+                }),'session');
                 setIsLogged(true);
                 setLoading(false);
             } catch (error) {
@@ -81,7 +81,7 @@ const useAuth = () => {
 
     const refreshAccessToken = async () => {
         try {
-            const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, 'local'))?.accessToken;
+            const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string,'session'))?.accessToken;
             if (!token) throw new Error("Token is missing");
             const isValid = await isTokenValid(token);
             if (!isValid) {
@@ -93,12 +93,21 @@ const useAuth = () => {
         } catch (error) {}
     }
 
+    const logoutUser = async () => {
+        // FIXME in production change creadentials to same-origin
+        const logoutResponse = await fetch('/api/users/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        setItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, "",'session');
+    }
+
     // initial Effect
     useEffect(() => {
         (async () => {
             if (isStorageValid()) {
                 try {
-                    const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, 'local'))?.accessToken;
+                    const token: string = JSON.parse(getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string,'session'))?.accessToken;
                     if (!token) throw new Error("Token is missing");
                     const isValid = await isTokenValid(token);
                     if (!isValid) {
@@ -116,7 +125,8 @@ const useAuth = () => {
     return [
         isLogged,
         isLoading,
-        refreshAccessToken
+        refreshAccessToken,
+        logoutUser
     ];
 }
 export default useAuth;

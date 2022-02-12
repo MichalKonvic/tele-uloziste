@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NextRouter, useRouter } from 'next/router';
 import MessageBox from '../notifications/messageBox';
+import useAuth from '../../hooks/useAuth';
 const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: NextRouter }) => {
     const [openProfileMenu, setopenProfileMenu] = useState(false);
     const MenuItems = () => {
@@ -50,14 +51,17 @@ const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: Next
 }
 const Navbar = () => {
     const router = useRouter();
+    const [, , , logoutFunction]: any = useAuth();
     const [confirmMessage, setConfigmMessage] = useState({
         title: "",
         description: "",
         primary: "",
         secondary: ""
     });
-    const handleLogout = () => {
+    const handleLogout = async () => {
         //TODO request to delete refresh token and delete localStorage
+        await logoutFunction();
+        router.push("/login");
     }
 
     return (
