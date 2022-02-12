@@ -121,7 +121,7 @@ const useAuth = () => {
             };
             getAccessToken();
         })()
-    });
+    },[]);
     return [
         isLogged,
         isLoading,
