@@ -6,11 +6,14 @@ import EmailGrabber from '../components/LoginPage/EmailGrabber';
 import PasswordGrabber from '../components/LoginPage/PasswordGrabber';
 import CodeGrabber from '../components/LoginPage/CodeGrabber';
 import { useRouter } from 'next/router';
+import useAuth from '../hooks/useAuth';
+import DotLoader from '../components/loaders/DotLoader';
 
 
 const LoginPage: NextPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
+    const [isLogged, isLoginLoading] = useAuth();
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const [isLoading, setIsLoading] = useState(false);
     const [formStyle, setFormStyle] = useState("default");
@@ -39,6 +42,11 @@ const LoginPage: NextPage = () => {
         message: "",
         token: ""
     })
+    useEffect(() => {
+        if (isLoginLoading) return;
+        if (isLogged) router.push("/");
+    }, [isLoginLoading, isLogged]);
+
 
     // Style reset
     useEffect(() => {
@@ -278,13 +286,17 @@ const LoginPage: NextPage = () => {
         validateRegCodeRequest();
     }
 
+    if (isLoginLoading || isLogged) return <div className='h-screen w-screen flex justify-center items-center bg-slate-200'>
+        <DotLoader />
+    </div>
+
     return (
         <div className='h-screen w-screen flex justify-center items-center bg-slate-200'>
             <Head>
                 <title>Tele Cloud</title>
                 <link rel="icon" href="/favicon.svg" />
             </Head>
-            <form className='duration-400 flex items-center flex-col w-full h-full justify-center bg-white md:w-fit md:h-fit md:px-10 md:py-14 md:border md:border-gray-300 md:shadow-xl md:rounded-xl overflow-hidden'>
+            <form className='duration-400 flex items-center flex-col w-full h-full justify-center bg-white md:w-[30rem] md:h-[25rem] md:px-10 md:py-14 md:border md:border-gray-300 md:shadow-xl md:rounded-xl overflow-hidden'>
                 <div className='flex items-center justify-center overflow-hidden py-2'>
                     <AnimatePresence exitBeforeEnter>
                         <motion.h1
@@ -298,14 +310,16 @@ const LoginPage: NextPage = () => {
                 <div className='mt-2 w-full mb-5 flex justify-center'>
                     <ErrorMessage message={errorMessage} />
                 </div>
-                <AnimatePresence>
+                <AnimatePresence exitBeforeEnter>
                     {formTitle == "Tele Cloud" && <EmailGrabber
+                        key="emailGrab"
                         handleSubmit={handleEmailEnter}
                         isLoading={isLoading}
                         style={formStyle}
                         setStyle={setFormStyle}
                     />}
                     {formTitle == "Heslo" && <PasswordGrabber
+                        key="passGrab"
                         handleAccountChange={handleChangeAccount}
                         isLoading={isLoading}
                         style={formStyle}
@@ -313,6 +327,7 @@ const LoginPage: NextPage = () => {
                         username={userData.username}
                         handleSubmit={handlePasswordEnter} />}
                     {formTitle == "Registrace" && <CodeGrabber
+                        key="codeGrab"
                         handleAccountChange={handleChangeAccount}
                         isLoading={isLoading}
                         style={formStyle}
