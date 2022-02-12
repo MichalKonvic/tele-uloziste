@@ -70,7 +70,6 @@ export default async function handler(
     }
 
     try {
-        //TODO add jwt token
         const user = new User({ email: parsedBody.userEmail, password: await hash(parsedBody.password, 10),updatedAt: Date(), lastLoginAt: Date() });
         await user.save();
 

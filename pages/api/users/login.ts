@@ -62,8 +62,7 @@ export default async function handler(
         res.setHeader('Set-Cookie', `__refresh_token__=${refreshToken}; Expires=${expirationDate}; SameSite=Strict; Secure; HttpOnly; Path=/`);
         res.status(200).json({
             statusCode: 200,
-            message: "Přihlášen",
-            token: "sdfsdfsf"
+            message: "Přihlášen"
         })
         return;
     } catch (error) {

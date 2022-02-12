@@ -59,7 +59,6 @@ const Navbar = () => {
         secondary: ""
     });
     const handleLogout = async () => {
-        //TODO request to delete refresh token and delete localStorage
         await logoutFunction();
         router.push("/login");
     }

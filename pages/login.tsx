@@ -5,10 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailGrabber from '../components/LoginPage/EmailGrabber';
 import PasswordGrabber from '../components/LoginPage/PasswordGrabber';
 import CodeGrabber from '../components/LoginPage/CodeGrabber';
+import { useRouter } from 'next/router';
 
 
 const LoginPage: NextPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
+    const router = useRouter();
     const [formTitle, setFormTitle] = useState("Tele Cloud");
     const [isLoading, setIsLoading] = useState(false);
     const [formStyle, setFormStyle] = useState("default");
@@ -54,7 +56,8 @@ const LoginPage: NextPage = () => {
             // TODO save somewhere jwt token
             setFormStyle("valid");
             setIsLoading(false);
-            setFormTitle("Vítej");
+            setFormTitle("Vítejte");
+            router.push("/");
             return;
         }
         if (apiLoginResponse.statusCode === 401) {
