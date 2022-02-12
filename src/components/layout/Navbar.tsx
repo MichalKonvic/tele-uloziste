@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NextRouter, useRouter } from 'next/router';
-import MessageBox from '../notifications/messageBox';
 import useAuth from '../../hooks/useAuth';
+import MessageBox from '../notifications/MessageBox';
 const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: NextRouter }) => {
     const [openProfileMenu, setopenProfileMenu] = useState(false);
     const MenuItems = () => {

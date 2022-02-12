@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef, KeyboardEvent, FormEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head'
 import { NextPage } from 'next';
 import { motion, AnimatePresence } from 'framer-motion';
-import EmailGrabber from '../components/LoginPage/EmailGrabber';
-import PasswordGrabber from '../components/LoginPage/PasswordGrabber';
-import CodeGrabber from '../components/LoginPage/CodeGrabber';
+import EmailGrabber from '../src/components/LoginPage/EmailGrabber';
+import PasswordGrabber from '../src/components/LoginPage/PasswordGrabber';
+import CodeGrabber from '../src/components/LoginPage/CodeGrabber';
 import { useRouter } from 'next/router';
-import useAuth from '../hooks/useAuth';
-import DotLoader from '../components/loaders/DotLoader';
+import useAuth from '../src/hooks/useAuth';
+import DotLoader from '../src/components/loaders/DotLoader';
 
 
 const LoginPage: NextPage = () => {

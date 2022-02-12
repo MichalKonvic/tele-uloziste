@@ -1,6 +1,6 @@
-import React, { Children, Dispatch, ReactChildren, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router'
-import DotLoader from '../components/loaders/DotLoader'
+import DotLoader from './loaders/DotLoader'
 import useAuth from '../hooks/useAuth'
 const PrivateRoute = ({ children, setAuthData }: { children: any, setAuthData?: Dispatch<SetStateAction<Object>> }) => {
     const router = useRouter()

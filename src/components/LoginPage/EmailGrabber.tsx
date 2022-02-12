@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import LoaderButton from '../../components/loaders/LoaderButton'
 import { motion } from 'framer-motion';
+import LoaderButton from '../../components/loaders/LoaderButton';
 interface ComponentProps {
     handleSubmit: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

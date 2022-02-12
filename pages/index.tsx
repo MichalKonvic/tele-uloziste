@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Navbar from '../components/layout/Navbar'
-import PrivateRoute from '../components/PrivateRoute'
+import Navbar from '../src/components/layout/Navbar'
+import PrivateRoute from '../src/components/PrivateRoute'
 const Home: NextPage = () => {
   return (
     <PrivateRoute>
