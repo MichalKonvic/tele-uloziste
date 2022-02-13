@@ -64,25 +64,27 @@ const Navbar = () => {
     }
 
     return (
-        <div className='flex h-14 w-screen bg-white justify-between items-center overflow-hidden'>
+        <React.Fragment>
             {confirmMessage?.title && <MessageBox message={confirmMessage} handlePrimary={() => handleLogout()} handleSecondary={() => setConfigmMessage({
                 title: "",
                 description: "",
                 primary: "",
                 secondary: ""
             })} />}
-            <div className='ml-2 flex items-center gap-2 overflow-hidden'>
-                <Image src="/favicon.svg" width={40} height={40} alt="Logo" className='z-10' />
-                <h1
-                    className='text-xl font-semibold text-gray-700'>Tele Cloud</h1>
-            </div>
-            <Menu handleLogout={() => setConfigmMessage({
-                title: "Odhlásit?",
-                description: "Opravdu se chceš odhlásit?",
-                primary: "Odhlaš mě",
-                secondary: "Zrušit"
-            })} router={router} />
-        </div >
+            <div className='flex h-14 w-screen z-40 bg-white justify-between items-center overflow-hidden top-0 absolute left-0 shadow-lg'>
+                <div className='ml-2 flex items-center gap-2 overflow-hidden'>
+                    <Image src="/favicon.svg" width={40} height={40} alt="Logo" className='z-10' />
+                    <h1
+                        className='text-xl font-semibold text-gray-700'>Tele Cloud</h1>
+                </div>
+                <Menu handleLogout={() => setConfigmMessage({
+                    title: "Odhlásit?",
+                    description: "Opravdu se chceš odhlásit?",
+                    primary: "Odhlaš mě",
+                    secondary: "Zrušit"
+                })} router={router} />
+            </div >
+        </React.Fragment>
     )
 }
 
