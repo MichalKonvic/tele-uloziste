@@ -1,7 +1,6 @@
 
 interface userI {
-    email: string,
-    iconUrl: string
+    email: string
 }
 interface cardDataI {
     id: string,
@@ -9,7 +8,6 @@ interface cardDataI {
     isDir: false
     Description: string,
     Author: userI,
-    Users: userI[],
     filename: string,
     formatIconUrl: string,
     path: string,
@@ -17,7 +15,9 @@ interface cardDataI {
 }
 interface directoryI{
     id: string,
-    isDir: true
+    Description: string,
+    isDir: true,
+    Author: userI,
     parentDir: string,
     path: string,
     Title: string,

@@ -24,87 +24,7 @@ const Home: NextPage = () => {
       {
         id: "123_",
         isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
-        parentDir: "root/",
-        path: "root/Folder/",
-        Title: "Složka",
-        children: [
-        ]
-      },
-      {
-        id: "123_",
-        isDir: true,
+        Description: "Tohle je prvni slozka",
         parentDir: "root/",
         path: "root/Folder/",
         Title: "Složka",
@@ -117,15 +37,14 @@ const Home: NextPage = () => {
         isDir: false,
         Description: "Toto je prvni soubor tohoto projektu",
         Author: {
-          email: "michal.konvicny@teleinformatika.eu",
-          iconUrl: "https://images.google.com/frajer.png"
+          email: "michal.konvicny@teleinformatika.eu"
         },
-        Users: [],
         filename: "souborek.pptx",
         formatIconUrl: "https://image.pngaaa.com/507/543507-middle.png",
         path: "root/",
         fileURL: "https://onedrive.com/souborek.pptx"
-      }
+      },
+
     ]
   }
   return (
