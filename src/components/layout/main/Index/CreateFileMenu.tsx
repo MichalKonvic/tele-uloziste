@@ -173,8 +173,7 @@ const FileURLSection = ({
     setSection: React.Dispatch<React.SetStateAction<string>>,
     showMenu: Dispatch<SetStateAction<boolean>>
 }) => {
-    const fileNameRef = useRef(null);
-    const fileDescriptionRef = useRef(null);
+    const fileURLRef = useRef(null);
 
     const handleURLEnter = () => {
         //TODO add logic
@@ -191,7 +190,7 @@ const FileURLSection = ({
             <h1 className='text-3xl font-bold text-gray-700 mt-5'>Odkaz na soubor</h1>
             <div className='flexCenter flex-col mb-5 h-32 gap-1'>
                 <input type="url" name="fileURL" id="FILE_URL"
-                    ref={fileNameRef}
+                    ref={fileURLRef}
                     placeholder="Odkaz na soubor"
                     className='w-72 h-10 bg-gray-200 rounded-lg px-3 outline-none text-lg text-gray-700 font-medium' />
                 <Link href={"/guids/createURL"} replace={false} passHref>
