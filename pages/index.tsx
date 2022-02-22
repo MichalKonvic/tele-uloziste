@@ -1,13 +1,15 @@
+import { AnimatePresence } from 'framer-motion'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { directoryI } from '../interfaces/DirCards'
+import CreateFileMenu from '../src/components/layout/main/Index/CreateFileMenu'
 import DirectoryCards from '../src/components/layout/main/Index/DirectoryCards'
 import Navbar from '../src/components/layout/Navbar'
 import ContentLoader from '../src/components/loaders/ContentLoader'
-import DotLoader from '../src/components/loaders/DotLoader'
 import PrivateRoute from '../src/components/PrivateRoute'
 const Home: NextPage = () => {
+  const [createMenu, setCreateMenu] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     setTimeout(() => {
@@ -24,6 +26,9 @@ const Home: NextPage = () => {
       {
         id: "123_",
         isDir: true,
+        Author: {
+          email: "michal.konvicny@teleinformatika.eu"
+        },
         Description: "Tohle je prvni slozka",
         parentDir: "root/",
         path: "root/Folder/",
@@ -56,12 +61,15 @@ const Home: NextPage = () => {
         </Head>
         <Navbar />
         <main className='mt-14 z-0'>
+          {createMenu &&
+            <CreateFileMenu showMenu={setCreateMenu} key="CREATE_FILE_MENU" />
+          }
           {isLoading &&
-            <div className='w-full flexCenter'>
+            <div className='w-screen h-full flexCenter'>
               <ContentLoader />
             </div>
           }
-          <DirectoryCards directoryData={fakeResponseData} />
+          {!isLoading && <DirectoryCards openCreateMenu={setCreateMenu} directoryData={fakeResponseData} />}
         </main>
       </div>
     </PrivateRoute>

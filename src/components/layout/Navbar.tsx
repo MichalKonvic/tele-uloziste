@@ -32,7 +32,7 @@ const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: Next
     }
     return (
         <motion.div
-            className='flex justify-center items-center'
+            className='flex justify-center items-center h-14'
         >
             <AnimatePresence>
                 {openProfileMenu &&
@@ -66,6 +66,11 @@ const Navbar = () => {
     return (
         <React.Fragment>
             {confirmMessage?.title && <MessageBox message={confirmMessage} handlePrimary={() => handleLogout()} handleSecondary={() => setConfigmMessage({
+                title: "",
+                description: "",
+                primary: "",
+                secondary: ""
+            })} closeMenu={() => setConfigmMessage({
                 title: "",
                 description: "",
                 primary: "",

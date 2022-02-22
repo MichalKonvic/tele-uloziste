@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
-const MessageBox = ({ handlePrimary, handleSecondary, message }: {
+const MessageBox = ({ handlePrimary, handleSecondary, message, closeMenu }: {
     handlePrimary: () => void,
     handleSecondary: () => void,
     message: {
@@ -8,17 +8,18 @@ const MessageBox = ({ handlePrimary, handleSecondary, message }: {
         description: string,
         primary: string,
         secondary: string
-    }
+    },
+    closeMenu: () => void
 }) => {
     return (
         <AnimatePresence>
-            <div className='z-50 absolute top-0 left-0 flex w-screen h-screen items-center justify-center'>
+            <div className='z-50 absolute top-0 left-0 flex w-screen h-screen items-center justify-center' onClick={(e) => e.currentTarget == e.target && closeMenu()}>
                 <motion.div
                     key="msgBOX"
                     initial={{ scale: 0.5 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0.5 }}
-                    className='flex flex-col items-center justify-between w-[22rem] bg-gray-300 border border-gray-400 shadow-2xl rounded-lg'
+                    className='flex flex-col items-center justify-between w-[22rem] border-gray-300 bg-white border shadow-2xl rounded-lg'
                 >
                     <div className='px-10 pt-8 w-full'>
                         <h1 className='font-bold text-4xl text-gray-700 w-full text-center'>{message?.title}</h1>
