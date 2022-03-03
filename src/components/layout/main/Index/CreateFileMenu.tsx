@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useLayoutEffect, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 type fileT = {
@@ -89,17 +89,6 @@ const TypeSelection = ({
             </div>
         </motion.div>
     );
-}
-
-const handleFolderCreation = (file: fileT, showMenu: Dispatch<SetStateAction<boolean>>) => {
-    // TODO API communication
-    console.log(file)
-    showMenu(false);
-}
-const handleFileCreation = (file: fileT, showMenu: Dispatch<SetStateAction<boolean>>) => {
-    // TODO API communication
-    console.log(file)
-    showMenu(false);
 }
 
 const CreationSelection = ({
@@ -207,6 +196,7 @@ const FileURLSection = ({
     );
 }
 
+
 const CreateFileMenu = ({ showMenu }: { showMenu: Dispatch<SetStateAction<boolean>> }) => {
     const [section, setSection] = useState("SELECT");
     const [file, setfile] = useState<fileT>({
@@ -214,6 +204,17 @@ const CreateFileMenu = ({ showMenu }: { showMenu: Dispatch<SetStateAction<boolea
         Name: "",
         Description: "",
     });
+    const handleFolderCreation = (file: fileT, showMenu: Dispatch<SetStateAction<boolean>>) => {
+        // TODO API communication
+        setSection("");
+        showMenu(false);
+    }
+    const handleFileCreation = (file: fileT, showMenu: Dispatch<SetStateAction<boolean>>) => {
+        // TODO API communication
+        setSection("");
+        showMenu(false);
+    }
+    if (!section) return null;
     return <div className='w-screen h-[calc(100vh-3.5rem)] top-14 flexCenter left-0 z-10  absolute' onClick={(e) => e.currentTarget == e.target && showMenu(false)}>
         <AnimatePresence>
             <motion.div
