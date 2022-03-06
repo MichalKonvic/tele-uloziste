@@ -5,12 +5,13 @@ interface userI {
 interface cardDataI {
     id: string,
     Title: string,
-    isDir: false
+    isDir: false,
     Description: string,
     Author: userI,
     filename: string,
     formatIconUrl: string,
     path: string,
+    hrefURL: string,
     fileURL: string
 }
 interface directoryI{
@@ -20,6 +21,7 @@ interface directoryI{
     Author: userI,
     parentDir: string,
     path: string,
+    hrefURL: string,
     Title: string,
     children: directoryI[] | cardDataI[];
 }

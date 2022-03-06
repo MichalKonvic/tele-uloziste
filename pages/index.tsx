@@ -32,6 +32,7 @@ const Home: NextPage = () => {
         Description: "Tohle je prvni slozka",
         parentDir: "root/",
         path: "root/Folder/",
+        hrefURL: "/root/Folder/",
         Title: "Složka",
         children: [
         ]
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
         filename: "souborek.pptx",
         formatIconUrl: "https://image.pngaaa.com/507/543507-middle.png",
         path: "root/",
+        hrefURL: "FILES/root/Folder/Soubor.pptx",
         fileURL: "https://onedrive.com/souborek.pptx"
       },
 
