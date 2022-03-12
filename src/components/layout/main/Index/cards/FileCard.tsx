@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { cardDataI } from '../../../../../../interfaces/DirCards'
 const FileCard = ({ fileData }: { fileData: cardDataI }) => {
-    return <Link href={fileData.hrefURL} passHref>
+    return <Link replace href={fileData?.hrefURL} passHref>
         <div
             className='w-40 h-40 bg-white shadow-xl rounded-lg p-3 flex flex-col hover:shadow-2xl duration-200 cursor-pointer'
         >
