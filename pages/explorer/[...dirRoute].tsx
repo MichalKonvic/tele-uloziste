@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { directoryI } from '../../interfaces/DirCards'
 import CreateFileMenu from '../../src/components/layout/main/Index/CreateFileMenu'
 import DirectoryCards from '../../src/components/layout/main/Index/DirectoryCards'
+import PathBar from '../../src/components/layout/main/PathBar'
 import Navbar from '../../src/components/layout/Navbar'
 import ContentLoader from '../../src/components/loaders/ContentLoader'
 import PrivateRoute from '../../src/components/PrivateRoute'
@@ -19,7 +20,7 @@ const Home: NextPage = () => {
     id: "123_",
     isDir: true,
     parentDir: "",
-    path: "root/",
+    path: "root/Slozka/Atd/MOreNEvim",
     Title: "root",
     children: [
       {
@@ -55,13 +56,14 @@ const Home: NextPage = () => {
   }
   return (
     <PrivateRoute>
-      <div className='h-screen w-screen flex bg-slate-200 flex-colo overflow-hidden'>
+      <div className='h-screen w-screen flex bg-slate-200 flex-col overflow-hidden'>
         <Head>
           <title>Tele Cloud</title>
           <link rel="icon" href="/favicon.svg" />
         </Head>
         <Navbar />
-        <main className='mt-14 z-0'>
+        <PathBar directoryData={fakeResponseData} />
+        <main className='mt-32 z-0'>
           {createMenu &&
             <CreateFileMenu showMenu={setCreateMenu} key="CREATE_FILE_MENU" />
           }
