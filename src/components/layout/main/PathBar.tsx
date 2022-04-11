@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { directoryI } from '../../../../interfaces/DirCards'
 
 const RouteItem = ({ RouteName }: { RouteName: string }) => {
@@ -18,7 +18,7 @@ const RouteItem = ({ RouteName }: { RouteName: string }) => {
 const RouteItemLast = ({ RouteName }: { RouteName: string }) => {
     return (
         <div className='items-center content-center justify-center flex gap-2' key={RouteName}>
-            <p className='text-gray-500'>{RouteName}</p>
+            <p className='text-gray-500 truncate w-24'>{RouteName}</p>
         </div>
     )
 }
@@ -29,6 +29,7 @@ const PathBar = (
 ) => {
     const pathArr = directoryData.path.split("/");
     const [menu, toggleMenu] = useState(false);
+    const menuRef = useRef(null);
 
     const RoutesMapper = () => {
         // mobile displays check
@@ -40,18 +41,24 @@ const PathBar = (
                     </button>
                     <p>/</p>
                     <RouteItemLast RouteName={pathArr[pathArr.length - 1]} />
-                    {menu && <div className='absolute bg-gray-200 rounded-lg left-5 z-20 top-12 flex flex-col overflow-hidden'>
-                        {pathArr.map((routeU) => {
-                            if (pathArr[pathArr.length - 1] == routeU) return null;
-                            // TODO add links functionality
-                            return (
-                                <div key={routeU} className="w-40 truncate h-10 px-2 py-1 flexCenter duration-200 hover:bg-gray-300 select-none cursor-pointer">
-                                    {routeU}
-                                </div>
-                            )
-                        })
-                        }
-                    </div>}
+                    {menu && <>
+                        <div className='w-screen h-screen absolute -top-14 left-0' onClick={(event) => {
+                            if (menuRef.current && !menuRef.current.contains(event.target)) toggleMenu(!menu)
+                        }}></div>
+                        <div ref={menuRef} className='absolute bg-gray-200 rounded-lg left-5 z-20 top-12 flex flex-col overflow-hidden'>
+                            {pathArr.map((routeU) => {
+                                if (pathArr[pathArr.length - 1] == routeU) return null;
+                                // TODO add links functionality
+                                return (
+                                    <div key={routeU} className="w-32 px-5 h-10 py-1 flexCenter duration-200 hover:bg-gray-300 select-none cursor-pointer">
+                                        <p className='truncate w-20 text-center'>{routeU}</p>
+                                    </div>
+                                )
+                            })
+                            }
+                        </div>
+                    </>
+                    }
                 </>
             )
         }
