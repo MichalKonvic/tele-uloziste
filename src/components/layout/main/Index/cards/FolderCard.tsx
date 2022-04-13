@@ -1,15 +1,20 @@
+import Link from 'next/link'
 import React from 'react'
 import { cardDataI, directoryI } from '../../../../../../interfaces/DirCards'
 const FolderCard = ({ folderData }: { folderData: directoryI }) => {
-    return <div
-        title={folderData.Description}
-        className='w-40 h-40 bg-white shadow-xl rounded-lg p-3 flex flex-col justify-center gap-1 items-center hover:gap-3 hover:shadow-2xl duration-200 cursor-pointer'
-    >
-        <div className='shadow-2xl'>
-            <FolderIcon />
-        </div>
-        <h1 className=' text-2xl font-bold text-gray-700'>{folderData?.Title}</h1>
-    </div>
+    return (
+        <Link href={"/explorer" + folderData.hrefURL} replace>
+            <div
+                title={folderData.Description}
+                className='w-40 h-40 bg-white shadow-xl rounded-lg p-3 flex flex-col justify-center gap-1 items-center hover:gap-3 hover:shadow-2xl duration-200 cursor-pointer'
+            >
+                <div className='shadow-2xl'>
+                    <FolderIcon />
+                </div>
+                <h1 className=' text-2xl font-bold text-gray-700'>{folderData?.Title}</h1>
+            </div>
+        </Link>
+    )
 }
 
 
