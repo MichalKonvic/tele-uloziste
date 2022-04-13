@@ -20,7 +20,7 @@ const Home: NextPage = () => {
     id: "123_",
     isDir: true,
     parentDir: "",
-    path: "root/Slozka/Tstsdsfsfsdfsfsfsfsdfsdfsdf/sdfsf",
+    path: "root/Slozka/Tstsdsf",
     Title: "root",
     children: [
       {

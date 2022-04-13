@@ -1,16 +1,19 @@
+import Link from 'next/link'
 import React, { useRef, useState } from 'react'
 import { directoryI } from '../../../../interfaces/DirCards'
 
-const RouteItem = ({ RouteName }: { RouteName: string }) => {
+const RouteItem = ({ RouteName, hrefURL }: { RouteName: string, hrefURL: string }) => {
     // TODO add link functionality to that
     return (
-        <div className='items-center content-center justify-center flex gap-2' key={RouteName}>
-            <p className='text-blue-400 underline truncate w-16 text-right cursor-pointer hover:text-blue-500'>{RouteName}</p>
-            <div className='-mb-2'>
-                <MiniFolderIcon />
+        <Link href={"/explorer/" + hrefURL} replace passHref>
+            <div className='items-center content-center justify-center flex gap-2'>
+                <p className='text-blue-400 underline truncate w-16 text-right cursor-pointer hover:text-blue-500'>{RouteName}</p>
+                <div className='-mb-2'>
+                    <MiniFolderIcon />
+                </div>
+                <p>/</p>
             </div>
-            <p>/</p>
-        </div>
+        </Link>
     )
 }
 
@@ -48,11 +51,14 @@ const PathBar = (
                         <div ref={menuRef} className='absolute bg-gray-200 rounded-lg left-5 z-20 top-12 flex flex-col overflow-hidden'>
                             {pathArr.map((routeU) => {
                                 if (pathArr[pathArr.length - 1] == routeU) return null;
-                                // TODO add links functionality
+                                // Finds index of current item and slices it to hrefURL
+                                const hrefURL = pathArr.slice(0, pathArr.findIndex(searchItem => searchItem === routeU) + 1).join("/") + "/";
                                 return (
-                                    <div key={routeU} className="w-32 px-5 h-10 py-1 flexCenter duration-200 hover:bg-gray-300 select-none cursor-pointer">
-                                        <p className='truncate w-20 text-center'>{routeU}</p>
-                                    </div>
+                                    <Link key={routeU} passHref href={"/explorer/" + hrefURL} replace>
+                                        <div className="w-32 px-5 h-10 py-1 flexCenter duration-200 hover:bg-gray-300 select-none cursor-pointer">
+                                            <p className='truncate w-20 text-center'>{routeU}</p>
+                                        </div>
+                                    </Link>
                                 )
                             })
                             }
@@ -67,8 +73,10 @@ const PathBar = (
             if (pathArr[pathArr.length - 1] == routeU) return (
                 <RouteItemLast RouteName={routeU} />
             );
+            // Finds index of current item and slices it to hrefURL
+            const hrefURL = pathArr.slice(0, pathArr.findIndex(searchItem => searchItem === routeU) + 1).join("/") + "/";
             return (
-                <RouteItem RouteName={routeU} />
+                <RouteItem key={routeU} RouteName={routeU} hrefURL={hrefURL} />
             )
         }))
     }
