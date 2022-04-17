@@ -1,13 +1,17 @@
 import mongoose from 'mongoose';
 
-const dataSchema = new mongoose.Schema({
+const dirSchema = new mongoose.Schema({
     parent: {
         type: mongoose.SchemaTypes.ObjectId,
-        required: true,
-        default: 0
     },
-    childs: {
+    dirChilds: {
         type: [mongoose.SchemaTypes.ObjectId]
+    },
+    fileChilds: {
+        type: [{
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'file'
+        }]
     },
     createdAt: {
         type: Date,
@@ -29,7 +33,8 @@ const dataSchema = new mongoose.Schema({
     },
     authorId: {
         type: mongoose.SchemaTypes.ObjectId,
-        required: true
+        required: true,
+        ref: 'user'
     },
 })
-export default mongoose.models.Data || mongoose.model('Data',dataSchema);
+export default mongoose.models.Dir || mongoose.model('Dir',dirSchema);
