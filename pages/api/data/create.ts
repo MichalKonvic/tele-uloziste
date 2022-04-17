@@ -9,21 +9,16 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    // Establish database connection
     await dbConnect();
-    const { token, data: Dir } = req.body;
-    const { parent, name, description, type: saveType } = Dir;
+    // Request data filter
+    const { token, data } = req.body;
+    const { parent, name, description, type: saveType, onedriveURL } = data;
+    //#region Body data checks
     if (!token) {
         res.status(400).json({
             statusCode: 400,
             message: "Token is missing"
-        });
-        return;
-    }
-    const tokenEmail = getTokenPayload(token);
-    if (!tokenEmail) {
-        res.status(401).json({
-            statusCode: 401,
-            message: "Unauthorized"
         });
         return;
     }
@@ -41,7 +36,26 @@ export default async function handler(
         });
         return;
     }
-    // Obtain user data from db request
+    if (saveType === "FILE" && !onedriveURL) {
+        res.status(400).json({
+            statusCode: 400,
+            message: "Missing data (onedrive Url)"
+        });
+        return;
+    }
+    //#endregion
+    
+    // Auth check
+    const tokenEmail = getTokenPayload(token);
+    if (!tokenEmail) {
+        res.status(401).json({
+            statusCode: 401,
+            message: "Unauthorized"
+        });
+        return;
+    }
+    
+    //#region Obtain user data from db request
     const getUserResponse = await (await fetch(`${serverURL}/api/db/getUser`, {
         method: 'POST',
         headers: {
@@ -52,6 +66,8 @@ export default async function handler(
             email: tokenEmail
         })
     })).json();
+
+    //#region Response checks
     if (getUserResponse?.statusCode !== 200) {
         if (getUserResponse?.statusCode === 404) {
             res.status(404).json({
@@ -70,11 +86,16 @@ export default async function handler(
         serverError(res);
         return;
     }
+    //#endregion
+    
     // User data from database
-    const { id, email } = getUserResponse?.data;
-    // Parent check
+    const { id } = getUserResponse?.data;
+    //#endregion
+
+    // Creates media as child of some parent directory
     if (parent) {
         // DB query
+        // Check if parent exists in database
         try {
             const parentSearchResult = await dir.findOne({ _id: parent });
             if (!parentSearchResult) {
@@ -94,13 +115,13 @@ export default async function handler(
             return;
         }
 
-
         // Parent found
         // TODO Create directory and file with parent
+        // TODO then add their ids into parent directory child param 
 
-        
     }
-    // Files are saved into root folder
+
+    // Media is in root directory
     if (saveType === "DIR") {
         // No parent directory folder save
         const NewDir = new dir({
@@ -119,7 +140,7 @@ export default async function handler(
             const NewFile = new file({
                 name: name,
                 description: description,
-                onedriveURL: "//TODO pass link",
+                onedriveURL: onedriveURL,
                 authorId: id,
                 parent: parent,
                 updatedAt: Date()
