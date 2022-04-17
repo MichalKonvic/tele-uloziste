@@ -5,6 +5,11 @@ const fileSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    onedriveURL: {
+        type: String,
+        required: true,
+        // TODO link validation
+    },
     description: {
         type: String,
         required: true,
@@ -15,8 +20,7 @@ const fileSchema = new mongoose.Schema({
     },
     parent: {
         type: mongoose.SchemaTypes.ObjectId,
-        required: true,
-        default: 0
+        ref: 'dir',
     },
     createdAt: {
         type: Date,

@@ -1,9 +1,10 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import { serverURL } from "../../../config";
-import { serverError } from "../../../lib/apiResponseTemplates";
+import { mediaCreated, serverError } from "../../../lib/apiResponseTemplates";
 import dbConnect from "../../../lib/dbConnect";
 import getTokenPayload from "../../../lib/tokenValidate";
 import dir from "../../../models/dir";
+import file from "../../../models/file";
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -74,8 +75,17 @@ export default async function handler(
     // Parent check
     if (parent) {
         // DB query
-        const parentSearchResult = await Dir.findById(parent);
-        if (!parentSearchResult) {
+        try {
+            const parentSearchResult = await dir.findOne({ _id: parent });
+            if (!parentSearchResult) {
+                // Parent not found
+                res.status(404).json({
+                    statusCode: 404,
+                    message: "Parent not found"
+                });
+                return;
+            }
+        } catch (error) {
             // Parent not found
             res.status(404).json({
                 statusCode: 404,
@@ -83,8 +93,12 @@ export default async function handler(
             });
             return;
         }
+
+
         // Parent found
         // TODO Create directory and file with parent
+
+        
     }
     // Files are saved into root folder
     if (saveType === "DIR") {
@@ -96,6 +110,30 @@ export default async function handler(
             updatedAt: Date()
         });
         await NewDir.save();
+        // Template response
+        mediaCreated(res);
+        return;
     }
-    // TODO No parent file save
+    if (saveType === "FILE") {
+        try {
+            const NewFile = new file({
+                name: name,
+                description: description,
+                onedriveURL: "//TODO pass link",
+                authorId: id,
+                parent: parent,
+                updatedAt: Date()
+            });
+            await NewFile.save();
+        } catch (error) {
+            // TODO handle specific errors
+            res.status(500).json({
+                statusCode: 500,
+                message: "Cannot save file into database"
+            });
+        }
+        // Template response
+        mediaCreated(res);
+        return;
+    }
 }

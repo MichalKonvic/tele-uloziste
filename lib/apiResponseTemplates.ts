@@ -5,5 +5,11 @@ function serverError(res:NextApiResponse) {
             message: "Došlo k problému"
         });
 }
+function mediaCreated(res:NextApiResponse) {
+    res.status(201).json({
+            statusCode: 201,
+            message: "Media created"
+        });
+}
 
-export { serverError, };
+export { serverError, mediaCreated};
