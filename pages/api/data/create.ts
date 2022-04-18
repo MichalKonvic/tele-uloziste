@@ -1,4 +1,5 @@
 import { NextApiResponse, NextApiRequest } from "next";
+import mongoose from 'mongoose';
 import { serverURL } from "../../../config";
 import { mediaCreated, serverError } from "../../../lib/apiResponseTemplates";
 import dbConnect from "../../../lib/dbConnect";
@@ -114,11 +115,58 @@ export default async function handler(
             });
             return;
         }
-
         // Parent found
-        // TODO Create directory and file with parent
-        // TODO then add their ids into parent directory child param 
+        try {
+            //#region Media creation
+            const newId = new mongoose.Types.ObjectId();
+            if (saveType === "FILE") {
+                // Creates file
+                const newFile = new file({
+                    _id: newId,
+                    name: name,
+                    onedriveURL: onedriveURL,
+                    description: description,
+                    authorId: id,
+                    parent: parent,
+                    updatedAt: Date()
+                });
+                await newFile.save();
+            } else {
+                // Creates dir
+                const newDir = new dir({
+                    _id: newId,
+                    name: name,
+                    description: description,
+                    authorId: id,
+                    parent: parent,
+                    updatedAt: Date()
+                });
+                await newDir.save();
+            }
+            //#endregion
 
+            //#region Adds child id into parent directory
+            const parentDir = await dir.findOne({ _id: parent });
+            if (saveType === "DIR") {
+                // child is directory
+                parentDir.dirChilds.push(newId);
+                parentDir.updatedAt = Date();
+                await parentDir.save();
+                mediaCreated(res);
+                return;
+            } else {
+                // child is file
+                parentDir.fileChilds.push(newId);
+                parentDir.updatedAt = Date();
+                await parentDir.save();
+                mediaCreated(res);
+                return;
+            }
+            //#endregion
+        } catch (error) {
+            serverError(res);
+            return;
+        }
     }
 
     // Media is in root directory
@@ -157,4 +205,6 @@ export default async function handler(
         mediaCreated(res);
         return;
     }
+    serverError(res);
+    return;
 }
