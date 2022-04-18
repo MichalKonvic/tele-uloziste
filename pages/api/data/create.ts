@@ -126,7 +126,7 @@ export default async function handler(
                     name: name,
                     onedriveURL: onedriveURL,
                     description: description,
-                    authorId: id,
+                    author: id,
                     parent: parent,
                     updatedAt: Date()
                 });
@@ -137,7 +137,7 @@ export default async function handler(
                     _id: newId,
                     name: name,
                     description: description,
-                    authorId: id,
+                    author: id,
                     parent: parent,
                     updatedAt: Date()
                 });
@@ -175,7 +175,7 @@ export default async function handler(
         const NewDir = new dir({
             name: name,
             description: description,
-            authorId: id,
+            author: id,
             updatedAt: Date()
         });
         await NewDir.save();
@@ -189,7 +189,7 @@ export default async function handler(
                 name: name,
                 description: description,
                 onedriveURL: onedriveURL,
-                authorId: id,
+                author: id,
                 parent: parent,
                 updatedAt: Date()
             });

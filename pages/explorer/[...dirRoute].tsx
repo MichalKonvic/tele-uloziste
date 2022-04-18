@@ -17,11 +17,11 @@ const Home: NextPage = () => {
     }, 500);
   }, [])
   const fakeResponseData: directoryI = {
-    id: "123_",
+    id: "",
     isDir: true,
     parentDir: "",
-    path: "root/Slozka/Tstsdsf",
-    Title: "root",
+    path: "",
+    Title: "",
     children: [
       {
         id: "123_",
@@ -54,6 +54,8 @@ const Home: NextPage = () => {
 
     ]
   }
+
+
   return (
     <PrivateRoute>
       <div className='h-screen w-screen flex bg-slate-200 flex-col overflow-hidden'>
@@ -62,7 +64,7 @@ const Home: NextPage = () => {
           <link rel="icon" href="/favicon.svg" />
         </Head>
         <Navbar />
-        <PathBar directoryData={fakeResponseData} />
+        {/*TODO rework <PathBar directoryData={fakeResponseData} /> */}
         <main className='mt-32 z-0'>
           {createMenu &&
             <CreateFileMenu showMenu={setCreateMenu} key="CREATE_FILE_MENU" />
@@ -72,7 +74,7 @@ const Home: NextPage = () => {
               <ContentLoader />
             </div>
           }
-          {!isLoading && <DirectoryCards openCreateMenu={setCreateMenu} directoryData={fakeResponseData} />}
+          {/* TODO rework {!isLoading && <DirectoryCards openCreateMenu={setCreateMenu} directoryData={fakeResponseData} />} */}
         </main>
       </div>
     </PrivateRoute>

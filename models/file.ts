@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-
+import './user'
+import './dir'
 const fileSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -14,13 +15,14 @@ const fileSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    authorId: {
+    author: {
         type: mongoose.SchemaTypes.ObjectId,
-        required: true
+        required: true,
+        ref: 'User'
     },
     parent: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'dir',
+        ref: 'Dir',
     },
     createdAt: {
         type: Date,

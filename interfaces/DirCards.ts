@@ -26,6 +26,33 @@ interface directoryI{
     children: directoryI[] | cardDataI[];
 }
 
+interface authorI{
+    email: string,
+    id: string
+}
+
+interface fileI{
+    id: string,
+    name: string,
+    description: string,
+    author: string,
+    onedriveURL: string,
+}
+
+interface breadcrumbItemI{
+    id: string,
+    name: string
+}
+
+interface v2directoryI {
+    id: string,
+    name: string,
+    description: string,
+    author: authorI,
+    breadcrumb: breadcrumbItemI[],
+    fileChilds: string[],
+    dirChilds: string[]
+}
 
 
-export type { userI, cardDataI,directoryI};
+export type { userI, cardDataI,directoryI,v2directoryI};
