@@ -1,12 +1,40 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import mongoose from 'mongoose';
-import { serverURL } from "../../../config";
-import { mediaCreated, serverError } from "../../../lib/apiResponseTemplates";
+import { mediaNotFound, serverError } from "../../../lib/apiResponseTemplates";
 import dbConnect from "../../../lib/dbConnect";
 import getTokenPayload from "../../../lib/tokenValidate";
 import dir from "../../../models/dir";
 import file from "../../../models/file";
-import { v2directoryI } from "../../../interfaces/DirCards";
+import { breadcrumbI } from "../../../interfaces/DirCards";
+
+async function getBreadcrumbArray(fromId:string) {
+    let breadCrumbArray: breadcrumbI[] = [];
+    async function processDir(searchId:string) {
+        try {
+            const dbSearch = await dir.findOne({ _id: searchId });
+            if (!dbSearch) return false
+            const { _id, name, parent } = dbSearch;
+            if (!_id || !name) return false;
+            breadCrumbArray.push({
+                _id: _id,
+                name: name
+            });
+            if (!dbSearch.parent) return true; // recursion stop
+            await processDir(parent);
+        } catch (error) {
+            return false;
+        }
+    }
+    await processDir(fromId);
+    // Push root folder
+    breadCrumbArray.push({
+        _id: "",
+        name: "Tele Cloud"
+    });
+    breadCrumbArray.reverse();
+    return breadCrumbArray;
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -35,7 +63,7 @@ export default async function handler(
     if (!dirId) {
         // returns root folder if no dirId
         const result = {
-            breadcrumb: []
+            breadcrumb: [],
             dirs: [],
             files:[]
         };
@@ -49,11 +77,68 @@ export default async function handler(
         const fileData = await file.find({ parent: { $exists: false } })
             .populate('author', 'email')
             .select('_id name description onedriveURL');
+        //@ts-ignore
         result.files = fileData;
-        // TODO add breadcrumb
-        
-        res.send(result);
+        result.breadcrumb = [{
+            //@ts-ignore
+            _id: "",
+            //@ts-ignore
+            name: "Tele Cloud"
+        }]
+        res.status(200).json({
+            statusCode: 200,
+            message: "Data found",
+            data: result
+        });
+        return;
+    }
+    try {
+        // dir check
+        const dirDbResult = await dir.findOne({ _id: dirId });
+        if (!dirDbResult) throw new Error("Media not found");
+    } catch (error) {
+        mediaNotFound(res);
         return;
     }
 
+    const result = {
+        breadcrumb: [],
+        dirs: [],
+        files:[]
+    };
+    const dirData = await dir.findOne({ _id: dirId })
+        .select('dirChilds fileChilds')
+        .populate({
+            path: 'dirChilds',
+            select: '_id name description author',
+            populate: {
+                path: 'author',
+                select: "email _id"
+            }
+        })
+        .populate({
+            path: 'fileChilds',
+            select: '_id name description author onedriveURL',
+            populate: {
+                path: 'author',
+                select: "email _id"
+            }
+        });
+    //@ts-ignore
+    result.dirs = dirData.dirChilds;
+    //@ts-ignore
+    result.files = dirData.fileChilds;
+    //@ts-ignore
+    result.breadcrumb = await getBreadcrumbArray(dirId);
+    if (!result.breadcrumb) {
+        serverError(res);
+        console.warn(`Broken path to root folder, id:${dirId}`);
+        return;
+    }
+    res.status(200).json({
+        statusCode: 200,
+        message: "Data found",
+        data: result
+    });
+    return;
 }

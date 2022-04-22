@@ -28,31 +28,31 @@ interface directoryI{
 
 interface authorI{
     email: string,
-    id: string
+    _id: string
 }
 
 interface fileI{
-    id: string,
+    _id: string,
     name: string,
     description: string,
     author: string,
     onedriveURL: string,
 }
 
-interface breadcrumbItemI{
-    id: string,
+interface breadcrumbI{
+    _id: string,
     name: string
 }
 
 interface v2directoryI {
-    id: string,
+    _id: string,
     name: string,
     description: string,
     author: authorI,
-    breadcrumb: breadcrumbItemI[],
+    bradcrumb: breadcrumbI[],
     fileChilds: string[],
     dirChilds: string[]
 }
 
 
-export type { userI, cardDataI,directoryI,v2directoryI};
+export type { userI, cardDataI,directoryI,v2directoryI,breadcrumbI};

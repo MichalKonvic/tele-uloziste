@@ -11,5 +11,11 @@ function mediaCreated(res:NextApiResponse) {
             message: "Media created"
         });
 }
+function mediaNotFound(res:NextApiResponse) {
+    res.status(201).json({
+            statusCode: 404,
+            message: "Media not found"
+        });
+}
 
-export { serverError, mediaCreated};
+export { serverError, mediaCreated,mediaNotFound};
