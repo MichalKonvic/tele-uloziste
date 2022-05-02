@@ -17,5 +17,11 @@ function mediaNotFound(res:NextApiResponse) {
             message: "Media not found"
         });
 }
+function mediaDeleted(res: NextApiResponse) {
+    res.status(200).json({
+        statusCode: 200,
+        message: "Media deleted"
+    });
+}
 
-export { serverError, mediaCreated,mediaNotFound};
+export { serverError, mediaCreated,mediaNotFound, mediaDeleted};
