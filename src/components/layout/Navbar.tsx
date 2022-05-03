@@ -51,7 +51,7 @@ const Menu = ({ handleLogout, router }: { handleLogout: () => void, router: Next
 }
 const Navbar = () => {
     const router = useRouter();
-    const [, , , logoutFunction]: any = useAuth();
+    const [, , , logoutFunction,]: any = useAuth();
     const [confirmMessage, setConfigmMessage] = useState({
         title: "",
         description: "",

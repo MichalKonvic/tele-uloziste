@@ -1,13 +1,12 @@
 import Link from 'next/link'
 import React, { useRef, useState } from 'react'
-import { directoryI } from '../../../../interfaces/DirCards'
+import { directoryI, breadcrumbI } from '../../../../interfaces/DirCards'
 
-const RouteItem = ({ RouteName, hrefURL }: { RouteName: string, hrefURL: string }) => {
-    // TODO add link functionality to that
+const RouteItem = ({ breadcrumbData }: { breadcrumbData: breadcrumbI }) => {
     return (
-        <Link href={"/explorer/" + hrefURL} replace passHref>
-            <div className='items-center content-center justify-center flex gap-2'>
-                <p className='text-blue-400 underline truncate w-16 text-right cursor-pointer hover:text-blue-500'>{RouteName}</p>
+        <Link href={"/explorer/" + breadcrumbData._id} replace passHref>
+            <div className='items-center content-center justify-center flex gap-2' key={breadcrumbData._id}>
+                <p className='text-blue-400 underline truncate w-16 text-right cursor-pointer hover:text-blue-500'>{breadcrumbData.name}</p>
                 <div className='-mb-2'>
                     <MiniFolderIcon />
                 </div>
@@ -18,45 +17,43 @@ const RouteItem = ({ RouteName, hrefURL }: { RouteName: string, hrefURL: string 
 }
 
 
-const RouteItemLast = ({ RouteName }: { RouteName: string }) => {
+const RouteItemLast = ({ breadcrumbData }: { breadcrumbData: breadcrumbI }) => {
     return (
-        <div className='items-center content-center justify-center flex gap-2' key={RouteName}>
-            <p className='text-gray-500 truncate w-24'>{RouteName}</p>
+        <div className='items-center content-center justify-center flex gap-2' key={breadcrumbData._id}>
+            <p className='text-gray-500 truncate w-24'>{breadcrumbData.name}</p>
         </div>
     )
 }
 
 const PathBar = (
-    { directoryData }:
-        { directoryData: directoryI }
+    { breadcrumbArray }:
+        { breadcrumbArray: breadcrumbI[] }
 ) => {
-    const pathArr = directoryData.path.split("/");
+    ''
     const [menu, toggleMenu] = useState(false);
     const menuRef = useRef(null);
 
     const RoutesMapper = () => {
         // mobile displays check
-        if (pathArr.length > 3) {
+        if (breadcrumbArray.length > 3) {
             return (
                 <>
-                    <button onClick={() => toggleMenu(!menu)}>
+                    <button key="breadcrumbButton" onClick={() => toggleMenu(!menu)}>
                         <MenuIcon />
                     </button>
                     <p>/</p>
-                    <RouteItemLast RouteName={pathArr[pathArr.length - 1]} />
+                    <RouteItemLast key="breadcrumbLastItem" breadcrumbData={breadcrumbArray[breadcrumbArray.length - 1]} />
                     {menu && <>
                         <div className='w-screen h-screen absolute -top-14 left-0' onClick={(event) => {
                             if (menuRef.current && !menuRef.current.contains(event.target)) toggleMenu(!menu)
                         }}></div>
                         <div ref={menuRef} className='absolute bg-gray-200 rounded-lg left-5 z-20 top-12 flex flex-col overflow-hidden'>
-                            {pathArr.map((routeU) => {
-                                if (pathArr[pathArr.length - 1] == routeU) return null;
-                                // Finds index of current item and slices it to hrefURL
-                                const hrefURL = pathArr.slice(0, pathArr.findIndex(searchItem => searchItem === routeU) + 1).join("/") + "/";
+                            {breadcrumbArray.map((breadcrumb) => {
+                                if (breadcrumbArray[breadcrumbArray.length - 1] == breadcrumb) return null;
                                 return (
-                                    <Link key={routeU} passHref href={"/explorer/" + hrefURL} replace>
+                                    <Link key={breadcrumb._id} passHref href={"/explorer/" + breadcrumb._id} replace>
                                         <div className="w-32 px-5 h-10 py-1 flexCenter duration-200 hover:bg-gray-300 select-none cursor-pointer">
-                                            <p className='truncate w-20 text-center'>{routeU}</p>
+                                            <p className='truncate w-20 text-center'>{breadcrumb}</p>
                                         </div>
                                     </Link>
                                 )
@@ -68,25 +65,25 @@ const PathBar = (
                 </>
             )
         }
-        return (pathArr.map((routeU) => {
-            // LAST ITEM SELECT
-            if (pathArr[pathArr.length - 1] == routeU) return (
-                <RouteItemLast RouteName={routeU} />
-            );
-            // Finds index of current item and slices it to hrefURL
-            const hrefURL = pathArr.slice(0, pathArr.findIndex(searchItem => searchItem === routeU) + 1).join("/") + "/";
-            return (
-                <RouteItem key={routeU} RouteName={routeU} hrefURL={hrefURL} />
-            )
-        }))
+        return <>
+            {(breadcrumbArray.map((breadcrumb) => {
+                // LAST ITEM SELECT
+                if (breadcrumbArray[breadcrumbArray.length - 1]._id == breadcrumb._id) return (
+                    <RouteItemLast key={breadcrumb._id} breadcrumbData={breadcrumb} />
+                );
+                return (
+                    <RouteItem key={breadcrumb._id} breadcrumbData={breadcrumb} />
+                )
+            }))}
+        </>
     }
 
     return (
         <div
             className='w-screen h-16 bg-gray-100 flex justify-between items-center absolute top-14'
         >
-            <div className='w-screen overflow-clip flex h-12 gap-2 items-center mx-2'>
-                <RoutesMapper />
+            <div key="breadcrumbContainer" className='w-screen overflow-clip flex h-12 gap-2 items-center mx-2'>
+                <RoutesMapper key="breadcrumbRoutes" />
             </div>
         </div>
     )
@@ -109,8 +106,8 @@ const MiniFolderIcon = () => {
                 <rect x="1" y="3" width="15" height="10" rx="1" fill="#9F76F7" />
             </g>
             <defs>
-                <filter id="filter0_d_6_91" x="0" y="3" width="17" height="13" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter0_d_6_91" x="0" y="3" width="17" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feMorphology radius="1" operator="erode" in="SourceAlpha" result="effect1_dropShadow_6_91" />
                     <feOffset dy="2" />

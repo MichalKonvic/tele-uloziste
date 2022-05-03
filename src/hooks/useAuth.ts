@@ -46,7 +46,7 @@ const useAuth = () => {
         }
     }
 
-    const getAccessToken = async () => {
+    const _getAccessToken = async () => {
         try {
                 // FIXME in production change creadentials to same-origin
                 const responseAccessToken:responseDataI = await (await fetch(`/api/auth/accessToken`, {
@@ -85,7 +85,7 @@ const useAuth = () => {
             if (!token) throw new Error("Token is missing");
             const isValid = await isTokenValid(token);
             if (!isValid) {
-                getAccessToken();
+                _getAccessToken();
                 return;
             }
             setIsLogged(true);
@@ -102,6 +102,13 @@ const useAuth = () => {
         setItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, "",'session');
     }
 
+    const getAcessToken = (): string => {
+        const token: string = JSON.parse(
+            getItem(process.env.NEXT_PUBLIC_STORAGE_KEY as string, 'session')
+        )?.accessToken;
+        return token
+    }
+
     // initial Effect
     useEffect(() => {
         (async () => {
@@ -111,7 +118,7 @@ const useAuth = () => {
                     if (!token) throw new Error("Token is missing");
                     const isValid = await isTokenValid(token);
                     if (!isValid) {
-                        getAccessToken();
+                        _getAccessToken();
                         return;
                     }
                     setIsLogged(true);
@@ -119,14 +126,15 @@ const useAuth = () => {
                     return;
                 } catch (error) {}
             };
-            getAccessToken();
+            _getAccessToken();
         })()
     },[]);
     return [
         isLogged,
         isLoading,
         refreshAccessToken,
-        logoutUser
+        logoutUser,
+        getAcessToken
     ];
 }
 export default useAuth;

@@ -44,6 +44,12 @@ interface breadcrumbI{
     name: string
 }
 
+interface displayDataI{
+    breadcrumb: breadcrumbI[],
+    dirs: v2directoryI[],
+    files: fileI[]
+}
+
 interface v2directoryI {
     _id: string,
     name: string,
@@ -55,4 +61,4 @@ interface v2directoryI {
 }
 
 
-export type { userI, cardDataI,directoryI,v2directoryI,breadcrumbI};
+export type { userI, cardDataI,directoryI,v2directoryI,breadcrumbI,displayDataI};

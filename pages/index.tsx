@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 const index = () => {
     const router = useRouter();
     useEffect(() => {
-        router.push("/explorer/root");
+        router.push("/explorer/R");
     }, []);
     return (
         <div></div>

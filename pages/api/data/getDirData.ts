@@ -28,7 +28,7 @@ async function getBreadcrumbArray(fromId:string) {
     await processDir(fromId);
     // Push root folder
     breadCrumbArray.push({
-        _id: "",
+        _id: "R",
         name: "Tele Cloud"
     });
     breadCrumbArray.reverse();
@@ -81,7 +81,7 @@ export default async function handler(
         result.files = fileData;
         result.breadcrumb = [{
             //@ts-ignore
-            _id: "",
+            _id: "R",
             //@ts-ignore
             name: "Tele Cloud"
         }]
