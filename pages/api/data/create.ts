@@ -195,11 +195,13 @@ export default async function handler(
             });
             await NewFile.save();
         } catch (error) {
+            console.log(error)
             // TODO handle specific errors
             res.status(500).json({
                 statusCode: 500,
                 message: "Cannot save file into database"
             });
+            return;
         }
         // Template response
         mediaCreated(res);

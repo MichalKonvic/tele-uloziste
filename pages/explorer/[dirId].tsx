@@ -81,7 +81,7 @@ const Home: NextPage = () => {
               <ContentLoader />
             </div>
           }
-          {/* {!isLoading && <DirectoryCards openCreateMenu={setCreateMenu} directoryData={fakeResponseData} />} */}
+          {!isLoading && <DirectoryCards openCreateMenu={setCreateMenu} directoryData={displayData} />}
         </main>
       </div>
     </PrivateRoute>

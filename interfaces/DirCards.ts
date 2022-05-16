@@ -50,6 +50,13 @@ interface displayDataI{
     files: fileI[]
 }
 
+interface folderI{
+    _id: string,
+    name: string,
+    description: string,
+    author: authorI
+}
+
 interface v2directoryI {
     _id: string,
     name: string,
@@ -61,4 +68,4 @@ interface v2directoryI {
 }
 
 
-export type { userI, cardDataI,directoryI,v2directoryI,breadcrumbI,displayDataI};
+export type { userI, cardDataI,directoryI,v2directoryI,breadcrumbI,displayDataI,folderI, fileI};
